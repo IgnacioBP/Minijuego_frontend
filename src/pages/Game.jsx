@@ -56,28 +56,36 @@ export default function ChatGame() {
       
       {/* Panel lateral */}
       <Grid item className="sidebar">
-        <Box display="flex" flexDirection="column" alignItems="center">
-          
-          <Avatar sx={{ width: 60, height: 60, mb: 1 }} />
-          
-          <Typography fontWeight="bold" color="green">
-            USER NAME
-          </Typography>
-          
-          {[...Array(5)].map((_, index) => (
-            <Box key={index} display="flex" alignItems="center" mt={2}>
-              <Avatar src="/npc.png" sx={{ width: 24, height: 24, mr: 1 }} />
-              <Typography variant="caption">
-                Nivel {index + 1}/ habilidad {index + 1}
-              </Typography>
-            </Box>
-          ))}
-          
-          <Box mt="auto" textAlign="center" pt={4}>
-            <EmojiEventsIcon fontSize="small" />
-            <Typography variant="caption">Modo desafío</Typography>
+        <Box display="flex" flexDirection="column" height="100%">
+        
+          {/* Avatar + nombre */}
+          <Box className="sidebar-avatar-box">
+            <Avatar className="sidebar-avatar" />
+            <Typography className="sidebar-username">USER NAME</Typography>
           </Box>
-          
+
+          {/* Niveles */}
+          <Box className= "sidebar-level-box">
+            {[...Array(7)].map((_, index) => (
+              <Box className= "sidebar-level-item">
+                <Avatar src="/npc.png" sx={{ width: 45, height: 45, mr: 1,  }} />
+                
+                <Typography className="sidebar-level-text ">
+                  Nivel {index + 1}/ habilidad {index + 1}
+                </Typography>
+
+              </Box>
+            ))}
+          </Box>
+
+          {/* Botton desafío */}
+          <Box mt="auto" className="sidebar-challenge-box" pt={4}>
+            <EmojiEventsIcon className="sidebar-challenge-icon" />
+            <Typography  className="sidebar-challenge-text">
+              Modo desafío
+            </Typography>
+          </Box>
+
         </Box>
       </Grid>
 
@@ -92,34 +100,36 @@ export default function ChatGame() {
           </Typography>
         </Box>
 
-        {/* Mensajes mostrados */}
-        {displayedMessages.map((msg, index) => (
-          <ChatBubble key={index} text={msg} />
-        ))}
+        {/* Zona de los mensajes mostrados */}
+        <div className="chat-messages">
+          {/* Mensajes mostrados */}
+          {displayedMessages.map((msg, index) => (
+            <ChatBubble key={index} text={msg} />
+          ))}
 
-        {/* Indicador de que personaje está escribiendo */}
-        {typing && (
-          <Typography
-            variant="body2"
-            sx={{ fontStyle: "italic", color: "gray", mb: 2 }}
-          >
-            Aquiles está escribiendo{dots}
-          </Typography>
-        )}
+          {/* Indicador de que personaje está escribiendo */}
+          {typing && (
+            <Typography
+              variant="body2"
+              sx={{ fontStyle: "italic", color: "gray", mb: 2 }}
+            >
+              Aquiles está escribiendo{dots}
+            </Typography>
+          )}
 
         {/* Botón del usuario */}
         {!typing && currentIndex === allMessages.length && (
           <Box mt={4} display="flex" justifyContent="flex-end">
             <Button
               variant="contained"
-              sx={{ borderRadius: "20px", textTransform: "none" }}
-              color = "primary"
+              className="activity-bubble-button"
               onClick={() => alert("¡Vamos a la actividad!")}
             >
               👉 ¡Intentar actividad!
             </Button>
           </Box>
         )}
+        </div>
       </Grid>
     </Grid>
   );

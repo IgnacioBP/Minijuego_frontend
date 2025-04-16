@@ -5,23 +5,101 @@
     justify-content: center;
 }
 
+
+/* ZONA DE SIDEBAR DEL JUEGO */
+
 .sidebar {
     background-color: #ace769;
     padding: 16px;
-    width: 15%;
+    width: 20%;
 }
+
+/* SIDEBAR: Avatar y nombre de usuario */
+.sidebar-avatar-box{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.sidebar-avatar {
+    width: 80px !important;
+    height: 80px !important;
+    margin-bottom: 1rem;
+}
+
+.sidebar-username {
+    font-weight: bold;
+    color: green;
+    font-size: 1.4rem !important
+}
+
+/* SIDEBAR: Niveles */
+.sidebar-level-box {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.sidebar-level-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 1;
+}
+
+.sidebar-level-text {
+    font-size: 1.4rem !important;
+    color: #333;
+}
+
+/* SIDEBAR: Desafio */
+
+.sidebar-challenge-box{
+    margin-top: auto;       
+    text-align: center;     /* textAlign="center" */
+    padding-top: 2rem; 
+}
+
+.sidebar-challenge-text {
+    font-size: 1.5rem !important; /* Tamaño del texto */
+    color: #333;        /* (opcional) Color del texto */
+    margin-top: 4px;    /* Separación opcional del ícono */
+    text-align: center; /* Centra el texto si el contenedor es más ancho */
+}
+
+.sidebar-challenge-icon{
+    font-size: 3rem !important; /* Tamaño del ícono */
+    color: #555;
+}
+
+/* ZONA DE CHAT DEL JUEGO */
 
 .chat-area {
     background-color: #e5d8d8;
-    padding: 32px;
     flex-direction: column;
     height: 100%;
-    width: 45%;
+    width: 60%;
 }
 
 .chat-header {
+    background-color: #d1681d;
+    height: 7%;
+    padding: 16px;
+    margin-bottom: 16px;
     display: flex;
     align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+
+
+.chat-messages {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    height: 80%;
+    padding-right: 8px;
     margin-bottom: 16px;
 }
 
@@ -31,11 +109,21 @@
     padding: 16px;
     border-radius: 16px !important;
     margin-bottom: 16px;
+    margin-left: 16px;
+    max-width: 50%;
+}
+
+.activity-bubble {
+    background-color: rgb(53, 182, 25) !important;
+    color: white !important;
+    padding: 16px;
+    border-radius: 16px !important;
+    margin-bottom: 16px;
     max-width: 40%;
 }
 
 .activity-bubble-button {
-    background-color: #F83D !important;
+    background-color: rgb(53, 182, 25) !important;
     color: white !important;
     padding: 16px;
     border-radius: 16px !important;
