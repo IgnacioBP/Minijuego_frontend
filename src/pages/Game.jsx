@@ -9,21 +9,79 @@ import {
   Typography,
   Paper,
 } from "@mui/material";
-import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 
-const allMessages = [
-  "En esos casos puede que estés frente a una parodia o sátira.",
-  "Estas suelen crear realidades y exagerar acciones o hechos...",
-  "Si está bien hecha, el lector puede llegar a creerla y compartir información falsa.",
-  "Pero claro aún estás muy verde para escribir una sátira como un profesional.",
-  "Primero empecemos con algo sencillo.",
-];
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useRef } from "react";
+
+const personajes = {
+  1: { nombre: "Aquiles Burlo", avatar: "/npc1.png" },
+  2: { nombre: "Clara Clickbait", avatar: "/npc2.png" },
+};
+
+
+
+const levelLabels = [
+  "Aquiles Burlo (Parodia)",
+  "Clara Clickbait (Conexión falsa)",
+  "Verónica Sesgada (Contenido engañoso)",
+  "Pancho Descontexto (Contexto falso)",
+  "Simón Suplente (Contenido impostor)",
+  "Camila Montaje (Contenido Manipulado)",
+  "Fabricio Invento (Contenido fabricado)"
+]
+
 
 export default function ChatGame() {
+  
+  const navigate = useNavigate();
+  
+  // Para los mensajes
   const [displayedMessages, setDisplayedMessages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [typing, setTyping] = useState(false);
   const [dots, setDots] = useState(".");
+
+  // Para manejar progreso 
+  const [progreso, setProgreso] = useState(null);
+
+  // Para scroll
+  const bottomRef = useRef(null);
+
+  // Numero de etapa
+  const { etapaId } = useParams();
+
+  //Personaje del nivel
+  const personaje = personajes[etapaId] || { nombre: "Personaje desconocido", avatar: "/default.png" };
+
+  //Mensajes de los chats
+  const [allMessages, setAllMessages] = useState([]);
+  
+  // Obtener mensajes
+  useEffect(() => {
+    const fetchMensajes = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/api/etapas/1/conversaciones/`);
+        if (!response.ok) {
+          throw new Error("Error al obtener mensajes");
+        }
+        const data = await response.json();
+    
+        // Imprimir pra ver que se recibe
+        console.log("Datos recibidos del backend:", data);
+    
+        setAllMessages(data);
+        setDisplayedMessages([]);
+        setCurrentIndex(0);
+      } catch (error) {
+        console.error("Error al obtener mensajes:", error);
+      }
+    };
+  
+    fetchMensajes();
+  }, [etapaId]);
+
 
   // Animar puntos suspensivos
   useEffect(() => {
@@ -36,9 +94,21 @@ export default function ChatGame() {
     return () => clearInterval(interval);
   }, [typing]);
 
-  // Controlar el envío secuencial de mensajes
+
+
+  // Controlar el envío secuencial de mensajes (AQUI ESTA EL TIMEPO ENTRE MENSAJES)
   useEffect(() => {
-    if (currentIndex < allMessages.length) {
+    if (!progreso || currentIndex >= allMessages.length) return;
+
+      const currentItem = allMessages[currentIndex];
+      const etapaKey = `etapa_${etapaId}`;
+      const actividadLimite = progreso[etapaKey]?.ultima_actividad_completada ?? 0;
+
+      if (currentItem.tipo_general === "actividad" && currentItem.orden_salida > actividadLimite) {
+        setDisplayedMessages((prev) => [...prev, currentItem]);
+        return;
+      }
+
       setTyping(true);
 
       const timeout = setTimeout(() => {
@@ -48,8 +118,25 @@ export default function ChatGame() {
       }, 1500); // Tiempo de espera entre mensajes
 
       return () => clearTimeout(timeout);
+    
+  },[currentIndex, allMessages, progreso]);
+
+  //Hook para el scroll automatico
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [currentIndex]);
+  }, [displayedMessages]);
+
+  //hook para progreso usuario  
+  useEffect(() => {
+    const progresoGuardado = localStorage.getItem("progresoUsuario");
+    if (progresoGuardado) {
+      setProgreso(JSON.parse(progresoGuardado));
+    }
+  }, []);
+
+
 
   return (
     <Grid container className="chat-container">
@@ -65,15 +152,18 @@ export default function ChatGame() {
           </Box>
 
           {/* Niveles */}
-          <Box className= "sidebar-level-box">
-            {[...Array(7)].map((_, index) => (
-              <Box className= "sidebar-level-item">
-                <Avatar src="/npc.png" sx={{ width: 45, height: 45, mr: 1,  }} />
-                
-                <Typography className="sidebar-level-text ">
-                  Nivel {index + 1}/ habilidad {index + 1}
+          <Box className="sidebar-level-box">
+            {levelLabels.map((label, index) => (
+              <Box 
+                key={index} 
+                className="sidebar-level-item"
+                onClick={() => navigate(`/juego/${index + 1}`)}  // redirige al nivel/chat de otro personaje
+                sx={{ cursor: "pointer" }}
+              >
+                <Avatar src="/npc.png" sx={{ width: 45, height: 45, mr: 1 }} />
+                <Typography className="sidebar-level-text">
+                  {label}
                 </Typography>
-
               </Box>
             ))}
           </Box>
@@ -96,15 +186,30 @@ export default function ChatGame() {
         <Box className="chat-header">
           <Avatar src="/npc.png" sx={{ width: 50, height: 50, mr: 2 }} />
           <Typography variant="h6" fontWeight="bold">
-            Aquiles Burlo
+            {personaje.nombre}
           </Typography>
         </Box>
 
         {/* Zona de los mensajes mostrados */}
         <div className="chat-messages">
           {/* Mensajes mostrados */}
-          {displayedMessages.map((msg, index) => (
-            <ChatBubble key={index} text={msg} />
+          {displayedMessages.map((item, index) => (
+            item.tipo_general === "mensaje" ? (
+              <ChatBubble 
+                key={index} 
+                text={item.contenido} 
+              />
+            ) : (
+              <ActividadBubble 
+                key={index}
+                disabled={
+                  progreso &&
+                  item.orden_salida  <= progreso[`etapa_${etapaId}`]?.ultima_actividad_completada
+                }  
+                //onClick={() => handleIrActividad(item.id)}
+                onClick={() => alert("¡Vamos a la actividad!")}
+              />
+            )
           ))}
 
           {/* Indicador de que personaje está escribiendo */}
@@ -113,22 +218,24 @@ export default function ChatGame() {
               variant="body2"
               sx={{ fontStyle: "italic", color: "gray", mb: 2 }}
             >
-              Aquiles está escribiendo{dots}
+              {personaje.nombre} está escribiendo{dots}
             </Typography>
           )}
 
-        {/* Botón del usuario */}
-        {!typing && currentIndex === allMessages.length && (
-          <Box mt={4} display="flex" justifyContent="flex-end">
-            <Button
-              variant="contained"
-              className="activity-bubble-button"
-              onClick={() => alert("¡Vamos a la actividad!")}
-            >
-              👉 ¡Intentar actividad!
-            </Button>
-          </Box>
-        )}
+          {/* Botón del usuario
+          {!typing && currentIndex === allMessages.length && (
+            <Box mt={4} display="flex" justifyContent="flex-end">
+              <Button
+                variant="contained"
+                className="activity-bubble-button"
+                onClick={() => alert("¡Vamos a la actividad!")}
+              >
+                👉 ¡Intentar actividad!
+              </Button>
+            </Box>
+          )} */}
+
+          <div ref={bottomRef} />
         </div>
       </Grid>
     </Grid>
@@ -138,12 +245,26 @@ export default function ChatGame() {
 
 
 
-
-
 function ChatBubble({ text }) {
   return (
     <Paper className="chat-bubble">
       <Typography variant="body2">{text}</Typography>
     </Paper>
+  );
+}
+
+
+function ActividadBubble({ onClick, disabled }) {
+  return (
+    <Box mt={4} display="flex" justifyContent="flex-end">
+      <Button 
+        variant="contained" 
+        onClick={onClick} 
+        disabled={disabled}
+        className="activity-bubble-button"
+      >
+        {disabled ? "Actividad completada" : "👉 Ir a la actividad"}
+      </Button>
+     </Box> 
   );
 }
