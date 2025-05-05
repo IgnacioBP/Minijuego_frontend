@@ -1,5 +1,4 @@
 import "../styles/Game.css";
-
 import { useEffect, useState } from "react";
 import {
   Avatar,
@@ -9,7 +8,6 @@ import {
   Typography,
   Paper,
 } from "@mui/material";
-
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -50,7 +48,7 @@ export default function ChatGame() {
   const bottomRef = useRef(null);
 
   // Numero de etapa
-  const { etapaId } = useParams();
+  const {etapaId} = useParams();
 
   //Personaje del nivel
   const personaje = personajes[etapaId] || { nombre: "Personaje desconocido", avatar: "/default.png" };
@@ -62,7 +60,7 @@ export default function ChatGame() {
   useEffect(() => {
     const fetchMensajes = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/etapas/1/conversaciones/`);
+        const response = await fetch(`http://localhost:8000/api/etapas/${etapaId}/conversaciones/`);
         if (!response.ok) {
           throw new Error("Error al obtener mensajes");
         }
@@ -137,6 +135,25 @@ export default function ChatGame() {
   }, []);
 
 
+  //
+  const handleIrActividad = (actividad) => {
+    const etapa = etapaId;
+    const actividadId = actividad.id;
+    const tipo = actividad.tipo;
+  
+    if (tipo === "seleccion_multiple") {
+      navigate(`/juego/${etapa}/actividad/seleccion/${actividadId}`);
+    } else if (tipo === "ordenar_frases") {
+      navigate(`/juego/${etapa}/actividad/ordenar/${actividadId}`);
+    } else {
+      // fallback o error
+      alert("Tipo de actividad no reconocido");
+    }
+  };
+
+
+
+
 
   return (
     <Grid container className="chat-container">
@@ -206,8 +223,8 @@ export default function ChatGame() {
                   progreso &&
                   item.orden_salida  <= progreso[`etapa_${etapaId}`]?.ultima_actividad_completada
                 }  
-                //onClick={() => handleIrActividad(item.id)}
-                onClick={() => alert("¡Vamos a la actividad!")}
+                onClick={() => handleIrActividad(item)}
+                // onClick={() => alert("¡Vamos a la actividad!")}
               />
             )
           ))}
@@ -221,19 +238,6 @@ export default function ChatGame() {
               {personaje.nombre} está escribiendo{dots}
             </Typography>
           )}
-
-          {/* Botón del usuario
-          {!typing && currentIndex === allMessages.length && (
-            <Box mt={4} display="flex" justifyContent="flex-end">
-              <Button
-                variant="contained"
-                className="activity-bubble-button"
-                onClick={() => alert("¡Vamos a la actividad!")}
-              >
-                👉 ¡Intentar actividad!
-              </Button>
-            </Box>
-          )} */}
 
           <div ref={bottomRef} />
         </div>
@@ -263,7 +267,7 @@ function ActividadBubble({ onClick, disabled }) {
         disabled={disabled}
         className="activity-bubble-button"
       >
-        {disabled ? "Actividad completada" : "👉 Ir a la actividad"}
+        {disabled ? "Actividad completada" : " Presiona👉 => Ir a la actividad"}
       </Button>
      </Box> 
   );

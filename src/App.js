@@ -1,9 +1,12 @@
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import ChatGame from "./pages/Game";
-import LoadingScreen from "./pages/Loading";
 import { Box, Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+
+import ChatGame from "./pages/Game";
+import LoadingScreen from "./pages/Loading";
+import OptionActivity from "./pages/Activities/Options";
+
 function Home() {
   const navigate = useNavigate();
 
@@ -44,6 +47,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/loading" element={<LoadingScreen />} />
         <Route path="/juego/:etapaId" element={<ChatGame />} />
+        <Route path="/juego/:etapaId/actividad/seleccion/:actividadId" element={<OptionActivity />} />
+        <Route path="/juego/:etapaId/actividad/ordenar_frases/:actividadId" element={<OptionActivity />} />
       </Routes>
     </Router>
   );

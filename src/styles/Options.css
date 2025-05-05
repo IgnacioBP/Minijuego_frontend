@@ -1,0 +1,67 @@
+.option-container {
+    max-width: 90%;
+    margin: auto;
+    Margin-top: 2%;
+}
+
+/* Enunciado  */
+
+.question-paper{
+    padding: 16px;
+    margin-bottom: 24px;
+    
+}
+
+/* Opciones de respuesta */
+.option-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 12px;
+    text-align: center;
+    height: 100px;
+}
+
+.option-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+}
+
+.option-card.selected {
+    background-color: #dce775 !important;
+    font-weight: bold;
+}
+
+/* Avatar y comentario */
+.feedback-bubble {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 16px;
+    max-width: 500px;
+}
+
+.feedback-text {
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 1rem;
+    line-height: 1.4;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.feedback-correct {
+    background-color: #c8e6c9;
+}
+
+.feedback-incorrect {
+    background-color: #ffccd2;
+}
+
+/* Botón de volver */
+.back-button {
+    margin-top: 24px;
+    transition: background-color 0.2s ease;
+}
+
+.back-button:hover {
+    background-color: #e0e0e0;
+}
