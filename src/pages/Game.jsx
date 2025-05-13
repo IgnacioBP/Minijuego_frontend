@@ -1,5 +1,7 @@
 import "../styles/Game.css";
-import { useEffect, useState } from "react";
+import {saveProgress} from "../utils/saveProgress"; 
+
+import {useEffect, useState} from "react";
 import {
   Avatar,
   Box,
@@ -9,13 +11,14 @@ import {
   Paper,
 } from "@mui/material";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { useRef } from "react";
+import {useParams} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
+import {useRef} from "react";
+
 
 const personajes = {
-  1: { nombre: "Aquiles Burlo", avatar: "/npc1.png" },
-  2: { nombre: "Clara Clickbait", avatar: "/npc2.png" },
+  1: {nombre: "Aquiles Burlo", avatar: "/npc1.png"},
+  2: {nombre: "Clara Clickbait", avatar: "/npc2.png"},
 };
 
 
@@ -70,8 +73,28 @@ export default function ChatGame() {
         console.log("Datos recibidos del backend:", data);
     
         setAllMessages(data);
-        setDisplayedMessages([]);
-        setCurrentIndex(0);
+
+
+        // Para lo de cargar de inmediato los mensajes y actividades ya hechas 
+        const progresoGuardado = localStorage.getItem("progresoUsuario");
+        if (progresoGuardado) {
+          const progresoObj = JSON.parse(progresoGuardado);
+          const etapaKey = `etapa_${etapaId}`;
+          const etapaProgreso = progresoObj[etapaKey] || {};
+
+          const mensajesYaMostrados = data.filter((item) => {
+            if (item.tipo_general === "mensaje") {
+              return item.orden_salida <= (etapaProgreso.ultimo_chat_mostrado || 0);
+            } else if (item.tipo_general === "actividad") {
+              return item.orden_salida <= (etapaProgreso.ultima_actividad_completada || 0);
+            }
+            return false;
+          });
+
+          setDisplayedMessages(mensajesYaMostrados);
+          setCurrentIndex(mensajesYaMostrados.length);
+        }
+        
       } catch (error) {
         console.error("Error al obtener mensajes:", error);
       }
@@ -110,10 +133,34 @@ export default function ChatGame() {
       setTyping(true);
 
       const timeout = setTimeout(() => {
+        // Mostrar escribiendo
         setTyping(false);
+        // Actualizar lista de mensjaes mostrados
         setDisplayedMessages((prev) => [...prev, allMessages[currentIndex]]);
+        // Mover indice
         setCurrentIndex((prev) => prev + 1);
-      }, 1500); // Tiempo de espera entre mensajes
+        
+        if (currentItem.tipo_general === "mensaje"){
+           // Guardar progrso del chat
+          const etapaKey = `etapa_${etapaId}`;
+          const progresoActual = JSON.parse(localStorage.getItem("progresoUsuario"));
+          const etapaProgreso = progresoActual[etapaKey]
+          const maximo_ultimo = Math.max(etapaProgreso.ultimo_chat_mostrado, currentItem.orden_salida );
+          const nuevoProgresoEtapa = {
+            ultimo_chat_mostrado: maximo_ultimo,
+            ultima_actividad_completada: etapaProgreso.ultima_actividad_completada
+          };
+
+          const nuevoProgreso = {
+            ...progresoActual,              
+            [etapaKey]: nuevoProgresoEtapa 
+          };
+          
+           localStorage.setItem("progresoUsuario", JSON.stringify(nuevoProgreso));
+        }
+       
+
+      }, 1500); // Tiempo de espera entre mensajes (RECORDAR CAMBIAR DESPUES DE ESTABLLECER BIEN EL TIEMPO)
 
       return () => clearTimeout(timeout);
     
@@ -135,8 +182,29 @@ export default function ChatGame() {
   }, []);
 
 
-  //
-  const handleIrActividad = (actividad) => {
+  //Ir a actividad
+  const handleIrActividad = async (actividad) => {
+    //Guardar datos 
+    const token = localStorage.getItem("token"); 
+    const progress = JSON.parse(localStorage.getItem("progresoUsuario"))
+    const activity = progress[`etapa_${etapaId}`].ultima_actividad_completada;
+    const conversation = progress[`etapa_${etapaId}`].ultimo_chat_mostrado;
+    console.log("Actividad")
+    console.log(activity)
+    console.log("Conversacion")
+    console.log(conversation)
+    try {
+      await saveProgress({
+        etapaId: etapaId,
+        conversacion: conversation,
+        actividad: activity,
+        token: token,
+      });
+    } catch (error) {
+      console.error("Error al guardar el progreso:", error);
+    }
+
+    //Ir a la actividad
     const etapa = etapaId;
     const actividadId = actividad.id;
     const tipo = actividad.tipo;
@@ -146,7 +214,6 @@ export default function ChatGame() {
     } else if (tipo === "ordenar_frases") {
       navigate(`/juego/${etapa}/actividad/ordenar/${actividadId}`);
     } else {
-      // fallback o error
       alert("Tipo de actividad no reconocido");
     }
   };

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import {
   Avatar,
   Box,
@@ -8,13 +8,14 @@ import {
   Paper,
   Fade,
 } from "@mui/material";
-import { useParams, useNavigate } from "react-router-dom";
+import {useParams, useNavigate} from "react-router-dom";
 import "../../styles/Options.css";
+import {saveProgress} from "../../utils/saveProgress"; 
 
 
 
 export default function OptionActivity() {
-  const { etapaId, actividadId } = useParams();
+  const {etapaId, actividadId} = useParams();
   const navigate = useNavigate();
 
   const [actividad, setActividad] = useState(null);
@@ -47,11 +48,51 @@ export default function OptionActivity() {
     } else {
       setEstadoRespuesta("incorrecta");
     }
-    // Mostrar botón para volver tras 3 segundos
+    //Mostrar botón para volver tras 3 segundos
     setTimeout(() => setMostrarBotonVolver(true), 3000);
   };
 
-  const volverAEtapa = () => {
+  const volverAEtapa = async () => {
+    //Actualizar en local storage
+    const etapaKey = `etapa_${etapaId}`;
+    const progresoActual = JSON.parse(localStorage.getItem("progresoUsuario"));
+    const etapaProgreso = progresoActual[etapaKey]
+    
+    const nuevoProgresoEtapa = {
+      ultimo_chat_mostrado: etapaProgreso.ultimo_chat_mostrado,
+      ultima_actividad_completada: actividadId
+    };
+
+    const nuevoProgreso = {
+      ...progresoActual,              
+      [etapaKey]: nuevoProgresoEtapa 
+    };
+    
+    localStorage.setItem("progresoUsuario", JSON.stringify(nuevoProgreso));
+
+    //Actualizar en API
+    const token = localStorage.getItem("token"); 
+    const progress = JSON.parse(localStorage.getItem("progresoUsuario"))
+    const activity = actividadId //Se lee la ultima conversacion
+    const conversation = progress[`etapa_${etapaId}`].ultimo_chat_mostrado;; // Se actualiza la ultima actividad a la recien completada
+
+    console.log("Actividad")
+    console.log(activity)
+    console.log("Conversacion")
+    console.log(conversation)
+
+    try {
+      await saveProgress({
+        etapaId: etapaId,
+        conversacion: conversation,
+        actividad: activity,
+        token: token,
+      });
+    } catch (error) {
+      console.error("Error al guardar el progreso:", error);
+    }
+
+    //Volver al chat
     navigate(`/juego/${etapaId}`);
   };
 
