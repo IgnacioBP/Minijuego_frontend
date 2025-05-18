@@ -9,9 +9,6 @@ export default function LoadingScreen() {
       // Simula un "delay"
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // En el futuro aquí iría el fetch real
-      // const res = await fetch("url_de_tu_backend");
-      // const progreso = await res.json();
       
       try {
         //Hacer login simulado con credenciales fijas para obtener token
@@ -33,18 +30,30 @@ export default function LoadingScreen() {
 
         localStorage.setItem("token", token);
 
-        // Simulación por ahora
-        const progresoUsuario = {
-          etapa_1: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0 },
-          etapa_2: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0 },
-          etapa_3: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0 },
-          etapa_4: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0 },
-          etapa_5: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0 },
-          etapa_6: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0 },
-          etapa_7: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0 },
-        };
+
+
+        const progresoRes = await fetch("http://localhost:8000/api/obtener-progreso/", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if (!progresoRes.ok) throw new Error("Error al obtener progreso del usuario");
+
+        const progresoUsuario = await progresoRes.json();
 
         localStorage.setItem("progresoUsuario", JSON.stringify(progresoUsuario));
+
+        // const progresoUsuario = {
+        //   etapa_1: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0 },
+        //   etapa_2: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0 },
+        //   etapa_3: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0 },
+        //   etapa_4: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0 },
+        //   etapa_5: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0 },
+        //   etapa_6: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0 },
+        //   etapa_7: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0 },
+        // };
 
         navigate("/juego/1");
 
