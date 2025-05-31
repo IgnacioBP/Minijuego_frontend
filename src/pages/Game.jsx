@@ -291,7 +291,6 @@ export default function ChatGame() {
                   item.orden_salida  <= progreso[`etapa_${etapaId}`]?.ultima_actividad_completada
                 }  
                 onClick={() => handleIrActividad(item)}
-                // onClick={() => alert("¡Vamos a la actividad!")}
               />
             )
           ))}
@@ -300,7 +299,7 @@ export default function ChatGame() {
           {typing && (
             <Typography
               variant="body2"
-              sx={{ fontStyle: "italic", color: "gray", mb: 2 }}
+              sx={{ fontStyle: "italic", color: "black", mb: 2 }}
             >
               {personaje.nombre} está escribiendo{dots}
             </Typography>

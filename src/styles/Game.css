@@ -1,7 +1,6 @@
 .chat-container {
     height: 100vh;
     width: 100vw;
-    background-color: #49C2C2;
     display: flex;
     justify-content: center;
 }
@@ -10,7 +9,7 @@
 /* ZONA DE SIDEBAR DEL JUEGO */
 
 .sidebar {
-    background-color: #ace769;
+    background-color: #454553;
     padding: 16px;
     width: 20%;
 }
@@ -31,7 +30,7 @@
 
 .sidebar-username {
     font-weight: bold;
-    color: green;
+    color: white;
     font-size: 1.4rem !important
 }
 
@@ -51,7 +50,7 @@
 
 .sidebar-level-text {
     font-size: 1rem !important;
-    color: #333;
+    color: white;
 }
 
 /* SIDEBAR: Desafio */
@@ -64,20 +63,20 @@
 
 .sidebar-challenge-text {
     font-size: 1.5rem !important; 
-    color: #333;        
+    color: white;        
     margin-top: 4px;    
     text-align: center; 
 }
 
 .sidebar-challenge-icon{
     font-size: 3rem !important;
-    color: #555;
+    color: #e6e609;
 }
 
 /* ZONA DE CHAT DEL JUEGO */
 
 .chat-area {
-    background-color: #e5d8d8;
+    background-color: #d9dbea ;
     width: 60%;
     display: flex;              /* ← importante */
     flex-direction: column;     /* ← permite dividir header, mensajes, botón */
@@ -85,7 +84,7 @@
 }
 
 .chat-header {
-    background-color: #d1681d;
+    background-color: #f2f3f9;
     height: 7%;
     padding: 16px;
     margin-bottom: 16px;
@@ -106,7 +105,7 @@
 }
 
 .chat-bubble {
-    background-color: #F83D !important;
+    background-color: #6D9C5CDD !important;
     color: white !important;
     padding: 16px;
     border-radius: 16px !important;
@@ -116,8 +115,6 @@
 }
 
 .activity-bubble {
-    background-color: rgb(53, 182, 25) !important;
-    color: white !important;
     padding: 16px;
     border-radius: 16px !important;
     margin-bottom: 16px;
@@ -125,8 +122,8 @@
 }
 
 .activity-bubble-button {
-    background-color: rgb(53, 182, 25) !important;
-    color: white !important;
+    background-color: #74D5E4 !important;
+    color: black !important;
     padding: 16px;
     border-radius: 16px !important;
     margin-bottom: 16px;

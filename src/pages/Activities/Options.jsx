@@ -112,12 +112,16 @@ export default function OptionActivity() {
       <Grid container columns={10} spacing={2} sx={{width:"100%"}}>
         
         {actividad?.contenido?.opciones?.map((opcion, index) => (
-          <Grid item size={5} xs={12} sm={6} key={index}>
-            <Box height="100%">
+          <Grid item size={10} key={index}>
+            <Box height="90%">
               <Paper
                 elevation={opcionSeleccionada === opcion ? 6 : 1}
-                className={`option-card ${opcionSeleccionada === opcion ? "selected" : ""}`}
-                onClick={() => handleSeleccion(opcion)}
+                className={`option-card
+                    ${opcionSeleccionada === opcion ? "selected" : ""}
+                    ${estadoRespuesta && opcion === actividad.respuesta ? "correct-answer" : ""}
+                    ${estadoRespuesta && opcionSeleccionada === opcion && opcion !== actividad.respuesta ? "incorrect-answer" : ""}
+                  `}                
+                  onClick={() => handleSeleccion(opcion)}
               >
                 <Typography>{opcion}</Typography>
               </Paper>
@@ -136,19 +140,20 @@ export default function OptionActivity() {
               <Avatar alt="personaje" src="/avatar.png" />
 
               <Paper
-              
                 className={`feedback-text ${
                   estadoRespuesta === "correcta"
                     ? "feedback-correct"
                     : "feedback-incorrect"
                 }`}
               >
+
                 <Typography variant="body1">
                   {estadoRespuesta === "correcta"
                     ? actividad.comentario_correcto
                     : actividad.comentario_incorrecto}
                 </Typography>
               </Paper>
+
             </Box>
           </Fade>
         ) : (
