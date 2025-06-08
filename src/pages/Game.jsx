@@ -19,6 +19,11 @@ import {useRef} from "react";
 const personajes = {
   1: {nombre: "Aquiles Burlo", avatar: "/npc1.png"},
   2: {nombre: "Clara Clickbait", avatar: "/npc2.png"},
+  3: {nombre: "Verónica Sesgada", avatar: "/npc3.png"},
+  4: {nombre: "Pancho Descontexto", avatar: "/npc4.png"},
+  5: {nombre: "Simón Suplente", avatar: "/npc5.png"},
+  6: {nombre: "Camila Montaje", avatar: "/npc6.png"},
+  7: {nombre: "Fabricio Invento", avatar: "/npc7.png"},
 };
 
 
@@ -211,8 +216,8 @@ export default function ChatGame() {
   
     if (tipo === "seleccion_multiple") {
       navigate(`/juego/${etapa}/actividad/seleccion/${actividadId}`);
-    } else if (tipo === "ordenar_frases") {
-      navigate(`/juego/${etapa}/actividad/ordenar/${actividadId}`);
+    } else if (tipo === "completar_frase") {
+      navigate(`/juego/${etapa}/actividad/completar_frase/${actividadId}`);
     } else {
       alert("Tipo de actividad no reconocido");
     }

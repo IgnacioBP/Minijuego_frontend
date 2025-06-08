@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import ChatGame from "./pages/Game";
 import LoadingScreen from "./pages/Loading";
 import OptionActivity from "./pages/Activities/Options";
+import CompleteSentenceActivity from "./pages/Activities/CompleteSentence";
+
 
 function Home() {
   const navigate = useNavigate();
@@ -48,7 +50,7 @@ function App() {
         <Route path="/loading" element={<LoadingScreen />} />
         <Route path="/juego/:etapaId" element={<ChatGame />} />
         <Route path="/juego/:etapaId/actividad/seleccion/:actividadId" element={<OptionActivity />} />
-        <Route path="/juego/:etapaId/actividad/ordenar_frases/:actividadId" element={<OptionActivity />} />
+        <Route path="/juego/:etapaId/actividad/completar_frase/:actividadId" element={<CompleteSentenceActivity />} />
       </Routes>
     </Router>
   );
