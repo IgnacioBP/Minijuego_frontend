@@ -1,4 +1,4 @@
-export async function saveProgress({ etapaId, conversacion, actividad, token }) {
+export async function saveProgress({ etapaId, conversacion, actividad,final,token }) {
   
   try {
     const response = await fetch("http://localhost:8000/api/actualizar-progreso/", {
@@ -11,6 +11,7 @@ export async function saveProgress({ etapaId, conversacion, actividad, token }) 
         etapa_id: etapaId,
         numero_conversacion_alcanzada: conversacion,
         numero_actividad_alcanzada: actividad,
+        final_alcanzado: final
       }),
     });
 
@@ -23,6 +24,7 @@ export async function saveProgress({ etapaId, conversacion, actividad, token }) 
 
     const data = await response.json();
     return data;
+    
   } catch (error) {
     console.error("Error al actualizar el progreso:", error);
     throw error;

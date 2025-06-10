@@ -31,7 +31,7 @@ export default function LoadingScreen() {
         localStorage.setItem("token", token);
 
 
-
+        //Recuperar progrso de usaurio
         const progresoRes = await fetch("http://localhost:8000/api/obtener-progreso/", {
           method: "GET",
           headers: {
@@ -45,17 +45,15 @@ export default function LoadingScreen() {
 
         localStorage.setItem("progresoUsuario", JSON.stringify(progresoUsuario));
 
+
+        //Niveles habilitados
+        const nivelesusuario = [1,3]
+        localStorage.setItem("nivelesHabilitados", JSON.stringify(nivelesusuario))
         // const progresoUsuario = {
-        //   etapa_1: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0 },
-        //   etapa_2: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0 },
-        //   etapa_3: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0 },
-        //   etapa_4: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0 },
-        //   etapa_5: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0 },
-        //   etapa_6: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0 },
-        //   etapa_7: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0 },
+        //   etapa_1: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0, },
         // };
 
-        navigate("/juego/1");
+        navigate("/juego/desafio");
 
 
       } catch (error) {

@@ -109,7 +109,8 @@ export default function CompleteSentenceActivity() {
     
     const nuevoProgresoEtapa = {
       ultimo_chat_mostrado: etapaProgreso.ultimo_chat_mostrado,
-      ultima_actividad_completada: actividad.orden_salida
+      ultima_actividad_completada: actividad.orden_salida,
+      final_alcanzado: false
     };
 
     const nuevoProgreso = {
@@ -124,6 +125,7 @@ export default function CompleteSentenceActivity() {
     const progress = JSON.parse(localStorage.getItem("progresoUsuario"))
     const activity = actividadId //Se lee la ultima conversacion
     const conversation = progress[`etapa_${etapaId}`].ultimo_chat_mostrado;; // Se actualiza la ultima actividad a la recien completada
+    const final_alcanzado = progress[`etapa_${etapaId}`].final_alcanzado
 
     console.log("Actividad")
     console.log(activity)
@@ -135,6 +137,7 @@ export default function CompleteSentenceActivity() {
         etapaId: etapaId,
         conversacion: conversation,
         actividad: activity,
+        final: final_alcanzado,
         token: token,
       });
     } catch (error) {

@@ -7,7 +7,7 @@ import ChatGame from "./pages/Game";
 import LoadingScreen from "./pages/Loading";
 import OptionActivity from "./pages/Activities/Options";
 import CompleteSentenceActivity from "./pages/Activities/CompleteSentence";
-
+import Prerequisite from "./pages/Prerequisite";
 
 function Home() {
   const navigate = useNavigate();
@@ -51,6 +51,7 @@ function App() {
         <Route path="/juego/:etapaId" element={<ChatGame />} />
         <Route path="/juego/:etapaId/actividad/seleccion/:actividadId" element={<OptionActivity />} />
         <Route path="/juego/:etapaId/actividad/completar_frase/:actividadId" element={<CompleteSentenceActivity />} />
+        <Route path="/juego/requisito" element={<Prerequisite />} />
       </Routes>
     </Router>
   );

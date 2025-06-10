@@ -64,6 +64,9 @@ export default function ChatGame() {
   //Mensajes de los chats
   const [allMessages, setAllMessages] = useState([]);
   
+  //Niveles habilitados
+  const nivelesHabilitados = localStorage.getItem("nivelesHabilitados");
+  
   // Obtener mensajes
   useEffect(() => {
     const fetchMensajes = async () => {
@@ -76,7 +79,6 @@ export default function ChatGame() {
     
         // Imprimir pra ver que se recibe
         console.log("Datos recibidos del backend:", data);
-    
         setAllMessages(data);
 
 
@@ -108,7 +110,7 @@ export default function ChatGame() {
     fetchMensajes();
   }, [etapaId]);
 
-
+ 
   // Animar puntos suspensivos
   useEffect(() => {
     let interval;
@@ -153,7 +155,8 @@ export default function ChatGame() {
           const maximo_ultimo = Math.max(etapaProgreso.ultimo_chat_mostrado, currentItem.orden_salida );
           const nuevoProgresoEtapa = {
             ultimo_chat_mostrado: maximo_ultimo,
-            ultima_actividad_completada: etapaProgreso.ultima_actividad_completada
+            ultima_actividad_completada: etapaProgreso.ultima_actividad_completada,
+            final_alcanzado: currentItem.final
           };
 
           const nuevoProgreso = {
@@ -162,6 +165,17 @@ export default function ChatGame() {
           };
           
            localStorage.setItem("progresoUsuario", JSON.stringify(nuevoProgreso));
+
+          if (currentItem.final){
+            const token = localStorage.getItem("token"); 
+            saveProgress({
+              etapaId,
+              conversacion: currentItem.orden_salida,
+              actividad: etapaProgreso.ultima_actividad_completada,
+              final: currentItem.final,
+              token: token,
+            });
+          }
         }
        
 
@@ -194,6 +208,8 @@ export default function ChatGame() {
     const progress = JSON.parse(localStorage.getItem("progresoUsuario"))
     const activity = progress[`etapa_${etapaId}`].ultima_actividad_completada;
     const conversation = progress[`etapa_${etapaId}`].ultimo_chat_mostrado;
+    const final_alcanzado = progress[`etapa_${etapaId}`].final_alcanzado
+
     console.log("Actividad")
     console.log(activity)
     console.log("Conversacion")
@@ -203,6 +219,7 @@ export default function ChatGame() {
         etapaId: etapaId,
         conversacion: conversation,
         actividad: activity,
+        final: final_alcanzado,
         token: token,
       });
     } catch (error) {
@@ -242,23 +259,41 @@ export default function ChatGame() {
 
           {/* Niveles */}
           <Box className="sidebar-level-box">
-            {levelLabels.map((label, index) => (
+            {levelLabels.map((label, index) => {
+            const nivelId = index + 1;
+            const habilitado = nivelesHabilitados.includes(nivelId);
+
+            return (
               <Box 
-                key={index} 
-                className="sidebar-level-item"
-                onClick={() => navigate(`/juego/${index + 1}`)}  // redirige al nivel/chat de otro personaje
-                sx={{ cursor: "pointer" }}
+                key={nivelId}
+                className={`sidebar-level-item ${habilitado ? "" : "sidebar-disabled"}`}
+                onClick={habilitado ? () => navigate(`/juego/${nivelId}`) : null}
+
               >
-                <Avatar src="/npc.png" sx={{ width: 45, height: 45, mr: 1 }} />
-                <Typography className="sidebar-level-text">
-                  {label}
-                </Typography>
+                <Avatar src={personajes[nivelId]?.avatar || "/npc.png"} className="sidebar-level-avatar"  />
+                
+                <Box>
+                  <Typography className="sidebar-level-text">{label}</Typography>
+
+                  <Typography 
+                    variant="caption" 
+                    className={`sidebar-level-status ${habilitado ? "green" : "red"}`}
+                  >
+                    ● {habilitado ? "En línea" : "Desconectado"}
+                  </Typography>
+                </Box>
               </Box>
-            ))}
+            );
+          })}
           </Box>
 
           {/* Botton desafío */}
-          <Box mt="auto" className="sidebar-challenge-box" pt={4}>
+          <Box 
+            mt="auto" 
+            className="sidebar-challenge-box" 
+            pt={4}
+            onClick={navigate(`/juego/requisito`)}
+          >
             <EmojiEventsIcon className="sidebar-challenge-icon" />
             <Typography  className="sidebar-challenge-text">
               Modo desafío

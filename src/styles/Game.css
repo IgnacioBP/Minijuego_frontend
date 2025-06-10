@@ -9,7 +9,7 @@
 /* ZONA DE SIDEBAR DEL JUEGO */
 
 .sidebar {
-    background-color: #454553;
+    background-color: #4c4c5c;
     padding: 16px;
     width: 20%;
 }
@@ -48,9 +48,38 @@
     flex: 1;
 }
 
+.sidebar-level-avatar{ 
+    width: 45px !important;
+    height: 45px !important;
+    margin-right: 0.5rem;
+}
+
 .sidebar-level-text {
     font-size: 1rem !important;
     color: white;
+}
+
+.sidebar-disabled .sidebar-level-avatar,
+.sidebar-disabled .sidebar-level-text {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.sidebar-level-status{
+    font-size: 0.85rem !important;;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    opacity: 1;
+}
+
+
+.sidebar-level-status.green {
+  color: rgb(16, 211, 16);
+}
+
+.sidebar-level-status.red {
+  color: rgb(255, 0, 0);
 }
 
 /* SIDEBAR: Desafio */
