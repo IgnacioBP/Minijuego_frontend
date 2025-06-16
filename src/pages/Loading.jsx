@@ -49,11 +49,12 @@ export default function LoadingScreen() {
         //Niveles habilitados
         const nivelesusuario = [1,3]
         localStorage.setItem("nivelesHabilitados", JSON.stringify(nivelesusuario))
+        console.log(nivelesusuario)
         // const progresoUsuario = {
         //   etapa_1: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0, },
         // };
 
-        navigate("/juego/desafio");
+        navigate("/juego/requisito");
 
 
       } catch (error) {
@@ -62,6 +63,7 @@ export default function LoadingScreen() {
     };
 
     fetchProgress();
+    
   }, [navigate]);
 
   return (

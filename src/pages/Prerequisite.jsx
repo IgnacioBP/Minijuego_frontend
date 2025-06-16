@@ -1,22 +1,19 @@
 import {useEffect, useState} from "react";
 import {
-  Avatar,
   Box,
   Button,
   Grid,
   Typography,
-  Paper,
-  Fade,
 } from "@mui/material";
 import {useParams, useNavigate} from "react-router-dom";
-import "../styles/Challenge.css";
+import "../styles/Prerequisite.css";
 
 
 export default function Prerequisite(){
   const navigate = useNavigate();
 
   const progreso = JSON.parse(localStorage.getItem("progresoUsuario")) || {};
-  const nivelesHabilitados = JSON.parse(localStorage.getItem("nivelesHabilitados")) || {}
+  const nivelesHabilitados = JSON.parse(localStorage.getItem("nivelesHabilitados"))
 
   const etapa1Completada = progreso[`etapa_${nivelesHabilitados[0]}`]?.final_alcanzado === true;
   const etapa2Completada = progreso[`etapa_${nivelesHabilitados[1]}`]?.final_alcanzado === true;
@@ -42,7 +39,7 @@ export default function Prerequisite(){
       {/* SECCION DE BOTONES DE CHATS */}
       <Grid container columns={10} spacing={4} sx={{width:"100%"}}>
         {[0, 1].map((i) => (
-          <Grid item size={5}>
+          <Grid item size={5} >
             <Button
               fullWidth
               variant="contained"
@@ -64,7 +61,7 @@ export default function Prerequisite(){
           variant="outlined"
           color="secondary"
           className="challenge-button"
-          onClick={() => navigate("/modo-desafio")}
+          onClick={() => navigate("/juego/desafio")}
           disabled={!desafioDesbloqueado}
         >
           {desafioDesbloqueado ? "Iniciar Modo Desafío" : "Modo Desafío Bloqueado 🔒"}

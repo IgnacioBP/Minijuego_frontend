@@ -156,7 +156,8 @@ export default function ChatGame() {
           const nuevoProgresoEtapa = {
             ultimo_chat_mostrado: maximo_ultimo,
             ultima_actividad_completada: etapaProgreso.ultima_actividad_completada,
-            final_alcanzado: currentItem.final
+            final_alcanzado: currentItem.final,
+            dificultad: etapaProgreso.dificultad
           };
 
           const nuevoProgreso = {
@@ -292,7 +293,7 @@ export default function ChatGame() {
             mt="auto" 
             className="sidebar-challenge-box" 
             pt={4}
-            onClick={navigate(`/juego/requisito`)}
+            onClick={() => navigate("/juego/requisito")}
           >
             <EmojiEventsIcon className="sidebar-challenge-icon" />
             <Typography  className="sidebar-challenge-text">

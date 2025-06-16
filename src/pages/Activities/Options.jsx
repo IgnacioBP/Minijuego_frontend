@@ -62,7 +62,8 @@ export default function OptionActivity() {
     const nuevoProgresoEtapa = {
       ultimo_chat_mostrado: etapaProgreso.ultimo_chat_mostrado,
       ultima_actividad_completada: actividad.orden_salida,
-      final_alcanzado: false
+      final_alcanzado: false,
+      dificultad: etapaProgreso.dificultad
     };
 
     const nuevoProgreso = {

@@ -8,6 +8,7 @@ import LoadingScreen from "./pages/Loading";
 import OptionActivity from "./pages/Activities/Options";
 import CompleteSentenceActivity from "./pages/Activities/CompleteSentence";
 import Prerequisite from "./pages/Prerequisite";
+import Challenge from "./pages/Challenge";
 
 function Home() {
   const navigate = useNavigate();
@@ -52,6 +53,7 @@ function App() {
         <Route path="/juego/:etapaId/actividad/seleccion/:actividadId" element={<OptionActivity />} />
         <Route path="/juego/:etapaId/actividad/completar_frase/:actividadId" element={<CompleteSentenceActivity />} />
         <Route path="/juego/requisito" element={<Prerequisite />} />
+        <Route path="/juego/desafio" element={<Challenge />} />
       </Routes>
     </Router>
   );
