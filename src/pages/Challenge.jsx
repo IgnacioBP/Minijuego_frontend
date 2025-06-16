@@ -54,7 +54,7 @@ export default function Challenge() {
       const tipo_act = tiposActividad[Math.floor(Math.random() * tiposActividad.length)];
       
       try {
-        const response = await fetch("http://localhost:8000/api/generar-pregunta/", {
+        const response = await fetch("https://mm-minigame1-f0cff7eb7d42.herokuapp.com/api/generar-pregunta/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

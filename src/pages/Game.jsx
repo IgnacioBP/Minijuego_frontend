@@ -71,7 +71,7 @@ export default function ChatGame() {
   useEffect(() => {
     const fetchMensajes = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/etapas/${etapaId}/conversaciones/`);
+        const response = await fetch(`https://mm-minigame1-f0cff7eb7d42.herokuapp.com/api/etapas/${etapaId}/conversaciones/`);
         if (!response.ok) {
           throw new Error("Error al obtener mensajes");
         }

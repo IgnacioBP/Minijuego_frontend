@@ -13,7 +13,7 @@ export default function Register() {
 
   const handleRegister = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/registrar/", {
+      const res = await fetch("https://mm-minigame1-f0cff7eb7d42.herokuapp.com/api/registrar/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

@@ -14,7 +14,7 @@ export default function LoadingScreen() {
         //Recuperar progrso de usaurio
         const token = localStorage.getItem("token")
 
-        const progresoRes = await fetch("http://localhost:8000/api/obtener-progreso/", {
+        const progresoRes = await fetch("https://mm-minigame1-f0cff7eb7d42.herokuapp.com/api/obtener-progreso/", {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${token}`

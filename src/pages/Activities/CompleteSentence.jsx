@@ -28,7 +28,7 @@ export default function CompleteSentenceActivity() {
   useEffect(() => {
     const fetchActividad = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/etapas/${etapaId}/actividades/${actividadId}/`);
+        const response = await fetch(`https://mm-minigame1-f0cff7eb7d42.herokuapp.com/api/etapas/${etapaId}/actividades/${actividadId}/`);
         if (!response.ok) throw new Error("Error al obtener la actividad");
         const data = await response.json();
         setActividad(data);

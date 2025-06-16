@@ -1,7 +1,7 @@
 export async function saveProgress({ etapaId, conversacion, actividad,final,token }) {
   
   try {
-    const response = await fetch("http://localhost:8000/api/actualizar-progreso/", {
+    const response = await fetch("https://mm-minigame1-f0cff7eb7d42.herokuapp.com/api/actualizar-progreso/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
