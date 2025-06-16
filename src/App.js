@@ -10,6 +10,9 @@ import CompleteSentenceActivity from "./pages/Activities/CompleteSentence";
 import Prerequisite from "./pages/Prerequisite";
 import Challenge from "./pages/Challenge";
 
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+
 function Home() {
   const navigate = useNavigate();
 
@@ -33,7 +36,7 @@ function Home() {
             usuarioId: 1,
           };
           localStorage.setItem("datosUsuario", JSON.stringify(datosUsuario));
-          navigate("/loading");
+          navigate("/login");
         }}
         sx={{ borderRadius: "20px", textTransform: "none" }}
       >
@@ -54,6 +57,8 @@ function App() {
         <Route path="/juego/:etapaId/actividad/completar_frase/:actividadId" element={<CompleteSentenceActivity />} />
         <Route path="/juego/requisito" element={<Prerequisite />} />
         <Route path="/juego/desafio" element={<Challenge />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </Router>
   );

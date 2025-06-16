@@ -11,27 +11,9 @@ export default function LoadingScreen() {
 
       
       try {
-        //Hacer login simulado con credenciales fijas para obtener token
-        const loginRes = await fetch("http://localhost:8000/api/fake-login/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            username: "usuario_prueba", 
-            password: "1234"
-          })
-        });
-
-        if (!loginRes.ok) throw new Error("Error al obtener token");
-
-        const tokenData = await loginRes.json();
-        const token = tokenData.access;
-
-        localStorage.setItem("token", token);
-
-
         //Recuperar progrso de usaurio
+        const token = localStorage.getItem("token")
+
         const progresoRes = await fetch("http://localhost:8000/api/obtener-progreso/", {
           method: "GET",
           headers: {
@@ -50,10 +32,7 @@ export default function LoadingScreen() {
         const nivelesusuario = [1,3]
         localStorage.setItem("nivelesHabilitados", JSON.stringify(nivelesusuario))
         console.log(nivelesusuario)
-        // const progresoUsuario = {
-        //   etapa_1: { ultimo_chat_mostrado: 0, ultima_actividad_completada: 0, },
-        // };
-
+ 
         navigate("/juego/requisito");
 
 
