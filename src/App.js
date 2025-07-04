@@ -5,56 +5,22 @@ import { useNavigate } from "react-router-dom";
 
 import ChatGame from "./pages/Game";
 import LoadingScreen from "./pages/Loading";
-import OptionActivity from "./pages/Activities/Options";
-import CompleteSentenceActivity from "./pages/Activities/CompleteSentence";
 import Prerequisite from "./pages/Prerequisite";
 import Challenge from "./pages/Challenge";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
-function Home() {
-  const navigate = useNavigate();
+import Start from "./pages/Start";
 
-  return (
-    <Box
-      height="100vh"
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center"
-      sx={{ backgroundColor: "#e0f7fa" }}
-    >
-      <Typography variant="h4" gutterBottom>
-        Bienvenido al juego de Fake News
-      </Typography>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => {
-          const datosUsuario = {
-            usuarioId: 1,
-          };
-          localStorage.setItem("datosUsuario", JSON.stringify(datosUsuario));
-          navigate("/login");
-        }}
-        sx={{ borderRadius: "20px", textTransform: "none" }}
-      >
-        Ir al Juego
-      </Button>
-    </Box>
-  );
-}
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Start />} />
         <Route path="/loading" element={<LoadingScreen />} />
         <Route path="/juego/:etapaId" element={<ChatGame />} />
-        <Route path="/juego/:etapaId/actividad/seleccion/:actividadId" element={<OptionActivity />} />
-        <Route path="/juego/:etapaId/actividad/completar_frase/:actividadId" element={<CompleteSentenceActivity />} />
         <Route path="/juego/requisito" element={<Prerequisite />} />
         <Route path="/juego/desafio" element={<Challenge />} />
         <Route path="/login" element={<Login />} />

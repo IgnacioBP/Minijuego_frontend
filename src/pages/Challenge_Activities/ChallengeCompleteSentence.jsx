@@ -12,7 +12,7 @@ import {useParams, useNavigate} from "react-router-dom";
 import "../../styles/CompleteSentence.css";
 
 
-export default function ChallengeCompleteSentence({ actividad, aumentarContador, siguientePregunta }) {
+export default function ChallengeCompleteSentence({ actividad, aumentarContador, siguientePregunta, guardarResultados, inicioPregunta }) {
 
     const [opcionesSeleccionadas, setOpcionesSeleccionadas] = useState([]);
     const [estadoRespuesta, setEstadoRespuesta] = useState(null); // "correcta" o "incorrecta"
@@ -44,11 +44,22 @@ export default function ChallengeCompleteSentence({ actividad, aumentarContador,
         const seleccionOrdenada = normalizar(opcionesSeleccionadas);
         const respuestaOrdenada = normalizar(respuesta);
 
+        let esCorrecta =  "";
         if (JSON.stringify(seleccionOrdenada) === JSON.stringify(respuestaOrdenada)) {
-        setEstadoRespuesta("correcta");
+            setEstadoRespuesta("correcta");
+            esCorrecta = true
+            aumentarContador()
         } else {
-        setEstadoRespuesta("incorrecta");
+            setEstadoRespuesta("incorrecta");
+            esCorrecta = false
         }
+
+        // Calcular tiempo en segundos
+        const tiempoResolucion = (new Date() - new Date(inicioPregunta)) / 1000;
+
+        //Guardar resultados
+        guardarResultados(actividad, opcionesSeleccionadas, esCorrecta, tiempoResolucion)
+
 
         //Mostrar botón para volver tras 3 segundos
         setTimeout(() => setMostrarBotonVolver(true), 3000);

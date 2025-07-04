@@ -14,6 +14,7 @@ export default function LoadingScreen() {
         //Recuperar progrso de usaurio
         const token = localStorage.getItem("token")
 
+        //const progresoRes = await fetch("http://localhost:8000/api/obtener-progreso/", {
         const progresoRes = await fetch("https://mm-minigame1-f0cff7eb7d42.herokuapp.com/api/obtener-progreso/", {
           method: "GET",
           headers: {
@@ -26,10 +27,10 @@ export default function LoadingScreen() {
         const progresoUsuario = await progresoRes.json();
 
         localStorage.setItem("progresoUsuario", JSON.stringify(progresoUsuario));
-
+        console.log(progresoUsuario)
 
         //Niveles habilitados
-        const nivelesusuario = [1,3]
+        const nivelesusuario = [1,2]
         localStorage.setItem("nivelesHabilitados", JSON.stringify(nivelesusuario))
         console.log(nivelesusuario)
  

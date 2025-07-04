@@ -16,10 +16,17 @@ import {useNavigate} from "react-router-dom";
 import {useRef} from "react";
 
 
+import ActivityBubble from "./Activity_Components/ActivityBubble";
+import ActivityCompleteSentence from "./Activity_Components/ActivityCompleteSentence";
+import ActivityOptions from "./Activity_Components/ActivityOptions";
+
+
+
+
 const personajes = {
-  1: {nombre: "Aquiles Burlo", avatar: "/npc1.png"},
-  2: {nombre: "Clara Clickbait", avatar: "/npc2.png"},
-  3: {nombre: "Verónica Sesgada", avatar: "/npc3.png"},
+  1: {nombre: "Aquiles Burlo", avatar: "/avatars/npc1.jpg"},
+  2: {nombre: "Clara Clickbait", avatar: "/avatars/npc2.jpg"},
+  3: {nombre: "Verónica Sesgada", avatar: "/avatars/npc3.jpg"},
   4: {nombre: "Pancho Descontexto", avatar: "/npc4.png"},
   5: {nombre: "Simón Suplente", avatar: "/npc5.png"},
   6: {nombre: "Camila Montaje", avatar: "/npc6.png"},
@@ -67,11 +74,23 @@ export default function ChatGame() {
   //Niveles habilitados
   const nivelesHabilitados = localStorage.getItem("nivelesHabilitados");
   
+  //Para manejar boton de retorno a desafio
+  const [complete, setComplete] = useState(false);
+
+
   // Obtener mensajes
   useEffect(() => {
     const fetchMensajes = async () => {
+      const token = localStorage.getItem("token");
       try {
-        const response = await fetch(`https://mm-minigame1-f0cff7eb7d42.herokuapp.com/api/etapas/${etapaId}/conversaciones/`);
+        //const response = await fetch(`http://localhost:8000/api/etapas/${etapaId}/conversaciones/`, {
+        const response = await fetch(`https://mm-minigame1-f0cff7eb7d42.herokuapp.com/api/etapas/${etapaId}/conversaciones/`, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
         if (!response.ok) {
           throw new Error("Error al obtener mensajes");
         }
@@ -89,15 +108,40 @@ export default function ChatGame() {
           const etapaKey = `etapa_${etapaId}`;
           const etapaProgreso = progresoObj[etapaKey] || {};
 
-          const mensajesYaMostrados = data.filter((item) => {
-            if (item.tipo_general === "mensaje") {
-              return item.orden_salida <= (etapaProgreso.ultimo_chat_mostrado || 0);
-            } else if (item.tipo_general === "actividad") {
-              return item.orden_salida <= (etapaProgreso.ultima_actividad_completada || 0);
-            }
-            return false;
-          });
+          setComplete(etapaProgreso.final_alcanzado);
+          if (etapaProgreso.final_alcanzado) {
+            setTyping(false);
+          }
 
+          const mensajesYaMostrados = [];
+
+          data.forEach((item) => {
+            if (item.tipo_general === "mensaje") {
+              if (item.orden_salida <= (etapaProgreso.ultimo_chat_mostrado || 0)) {
+                mensajesYaMostrados.push(item);
+              }
+            } else if (item.tipo_general === "actividad") {
+              if (item.orden_salida <= (etapaProgreso.ultima_actividad_completada || 0)) {
+                mensajesYaMostrados.push(item);
+
+                // Si tiene una respuesta pasada, agregar el comentario como nuevo mensaje
+                if (item.respuesta_usuario) {
+                  console.log("respuesta obtenida "+item.respuesta_usuario.es_correcta)
+                  const comentario = item.respuesta_usuario.es_correcta
+                    ? item.comentario_correcto
+                    : item.comentario_incorrecto;
+
+                  mensajesYaMostrados.push({
+                    tipo_general: "mensaje",
+                    contenido: comentario,
+                    orden_salida: item.orden_salida + 0.5,
+                  });
+                }
+              }
+            }
+          });
+          console.log("DATA A RENDERIZAR")
+          console.log(mensajesYaMostrados)
           setDisplayedMessages(mensajesYaMostrados);
           setCurrentIndex(mensajesYaMostrados.length);
         }
@@ -106,7 +150,7 @@ export default function ChatGame() {
         console.error("Error al obtener mensajes:", error);
       }
     };
-  
+    
     fetchMensajes();
   }, [etapaId]);
 
@@ -168,7 +212,8 @@ export default function ChatGame() {
            localStorage.setItem("progresoUsuario", JSON.stringify(nuevoProgreso));
 
           if (currentItem.final){
-            const token = localStorage.getItem("token"); 
+            const token = localStorage.getItem("token");
+            setComplete(currentItem.final)
             saveProgress({
               etapaId,
               conversacion: currentItem.orden_salida,
@@ -176,11 +221,12 @@ export default function ChatGame() {
               final: currentItem.final,
               token: token,
             });
+            setTyping(false);
           }
         }
        
 
-      }, 1500); // Tiempo de espera entre mensajes (RECORDAR CAMBIAR DESPUES DE ESTABLLECER BIEN EL TIEMPO)
+      }, 3000); // Tiempo de espera entre mensajes
 
       return () => clearTimeout(timeout);
     
@@ -198,49 +244,16 @@ export default function ChatGame() {
     const progresoGuardado = localStorage.getItem("progresoUsuario");
     if (progresoGuardado) {
       setProgreso(JSON.parse(progresoGuardado));
+      console.log(progresoGuardado)
+      const pG = JSON.parse(progresoGuardado);
+      const etapaKey = `etapa_${etapaId}`;
+      const etapaProgreso = pG[etapaKey]
+      setComplete(etapaProgreso.final_alcanzado)
+      if(etapaProgreso.final_alcanzado) {
+        setTyping(false);
+      }
     }
-  }, []);
-
-
-  //Ir a actividad
-  const handleIrActividad = async (actividad) => {
-    //Guardar datos 
-    const token = localStorage.getItem("token"); 
-    const progress = JSON.parse(localStorage.getItem("progresoUsuario"))
-    const activity = progress[`etapa_${etapaId}`].ultima_actividad_completada;
-    const conversation = progress[`etapa_${etapaId}`].ultimo_chat_mostrado;
-    const final_alcanzado = progress[`etapa_${etapaId}`].final_alcanzado
-
-    console.log("Actividad")
-    console.log(activity)
-    console.log("Conversacion")
-    console.log(conversation)
-    try {
-      await saveProgress({
-        etapaId: etapaId,
-        conversacion: conversation,
-        actividad: activity,
-        final: final_alcanzado,
-        token: token,
-      });
-    } catch (error) {
-      console.error("Error al guardar el progreso:", error);
-    }
-
-    //Ir a la actividad
-    const etapa = etapaId;
-    const actividadId = actividad.id;
-    const tipo = actividad.tipo;
-  
-    if (tipo === "seleccion_multiple") {
-      navigate(`/juego/${etapa}/actividad/seleccion/${actividadId}`);
-    } else if (tipo === "completar_frase") {
-      navigate(`/juego/${etapa}/actividad/completar_frase/${actividadId}`);
-    } else {
-      alert("Tipo de actividad no reconocido");
-    }
-  };
-
+  }, [etapaId]);
 
 
 
@@ -309,7 +322,7 @@ export default function ChatGame() {
 
         {/* Header de chat */}
         <Box className="chat-header">
-          <Avatar src="/npc.png" sx={{ width: 50, height: 50, mr: 2 }} />
+          <Avatar src={personajes[etapaId]?.avatar || "/npc.png"} sx={{ width: 50, height: 50, mr: 2 }} />
           <Typography variant="h6" fontWeight="bold">
             {personaje.nombre}
           </Typography>
@@ -318,23 +331,62 @@ export default function ChatGame() {
         {/* Zona de los mensajes mostrados */}
         <div className="chat-messages">
           {/* Mensajes mostrados */}
-          {displayedMessages.map((item, index) => (
-            item.tipo_general === "mensaje" ? (
-              <ChatBubble 
-                key={index} 
-                text={item.contenido} 
-              />
-            ) : (
-              <ActividadBubble 
-                key={index}
-                disabled={
-                  progreso &&
-                  item.orden_salida  <= progreso[`etapa_${etapaId}`]?.ultima_actividad_completada
-                }  
-                onClick={() => handleIrActividad(item)}
-              />
-            )
-          ))}
+          
+          {displayedMessages.map((item, index) => {
+          if (item.tipo_general === "mensaje") {
+            return <ChatBubble key={index} text={item.contenido} />;
+          }
+
+          // Si es actividad
+          const actividadCompletada = 
+            progreso &&
+            item.orden_salida <= progreso[`etapa_${etapaId}`]?.ultima_actividad_completada;
+
+            const commonProps = {
+              key: index,
+              actividad: item,
+              disabled: actividadCompletada,
+              onResponder: (mostrado, comentario) => {
+                const comentarioBubble = {
+                  tipo_general: "mensaje",
+                  contenido: comentario,
+                  orden_salida: item.orden_salida + 0.5,
+                };
+                
+                if (mostrado !== true){
+                  setDisplayedMessages((prev) => [...prev, comentarioBubble]);
+
+                  setTimeout(() => {
+                    setCurrentIndex((prev) => prev + 1);
+                  }, 3000);
+                }
+                  
+              },
+            };
+            
+            switch (item.tipo) {
+              case "seleccion_multiple":
+                return <ActivityOptions {...commonProps} />;
+              case "completar_frase":
+                return <ActivityCompleteSentence {...commonProps} />;
+              default:
+                console.log("ERROR:tipo de render no identificado")
+                return <ActivityBubble {...commonProps} />; 
+            }
+          })}
+          
+          
+          {complete && (
+            <div style={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}>
+              <Button 
+                variant="contained" 
+                onClick={() => navigate("/juego/requisito")}
+                sx={{ textTransform: "none", borderRadius: "20px" }}
+              >
+                Volver a la ventana de inicio
+              </Button>
+            </div>
+          )}
 
           {/* Indicador de que personaje está escribiendo */}
           {typing && (
@@ -348,11 +400,12 @@ export default function ChatGame() {
 
           <div ref={bottomRef} />
         </div>
+
+
       </Grid>
     </Grid>
   );
 }
-
 
 
 
@@ -361,21 +414,5 @@ function ChatBubble({ text }) {
     <Paper className="chat-bubble">
       <Typography variant="body2">{text}</Typography>
     </Paper>
-  );
-}
-
-
-function ActividadBubble({ onClick, disabled }) {
-  return (
-    <Box mt={4} display="flex" justifyContent="flex-end">
-      <Button 
-        variant="contained" 
-        onClick={onClick} 
-        disabled={disabled}
-        className="activity-bubble-button"
-      >
-        {disabled ? "Actividad completada" : " Presiona👉 => Ir a la actividad"}
-      </Button>
-     </Box> 
   );
 }

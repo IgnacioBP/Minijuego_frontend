@@ -50,23 +50,26 @@
     justify-content: flex-start;
     flex: 0 1 auto;  /* Allow items to shrink if needed */
     padding: 4px 0; 
+
 }
 
 .sidebar-level-avatar{ 
     width: clamp(20px, 6vw, 30px) !important;   /* Dynamically resize avatar */
     height: clamp(20px, 6vw, 30px) !important;
     margin-right: 0.5rem;
+    cursor: pointer;
 }
 
 .sidebar-level-text {
     font-size: 1rem !important;
     color: white;
+    cursor: pointer;
 }
 
 .sidebar-disabled .sidebar-level-avatar,
 .sidebar-disabled .sidebar-level-text {
   opacity: 0.5;
-  cursor: default;
+  cursor: not-allowed;
 }
 
 .sidebar-level-status{
@@ -80,17 +83,21 @@
 
 .sidebar-level-status.green {
   color: rgb(16, 211, 16);
+  cursor: pointer;
 }
 
 .sidebar-level-status.red {
   color: rgb(255, 0, 0);
+  cursor: not-allowed;
+
 }
 
 /* SIDEBAR: Desafio */
 
 .sidebar-challenge-box{
     margin-top: auto;       
-    text-align: center;     
+    text-align: center;    
+    cursor: pointer;
 }
 
 .sidebar-challenge-text {

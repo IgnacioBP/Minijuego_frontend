@@ -12,20 +12,30 @@ import {useParams, useNavigate} from "react-router-dom";
 import "../../styles/Options.css";
 
 
-export default function ChallengeOption({ actividad, aumentarContador, siguientePregunta }) {
+export default function ChallengeOption({ actividad, aumentarContador, siguientePregunta, guardarResultados, inicioPregunta }) {
 
   const [estadoRespuesta, setEstadoRespuesta] = useState(null); // "correcta" o "incorrecta"
   const [opcionSeleccionada, setOpcionSeleccionada] = useState(null);
   const [mostrarBotonSiguiente, setMostrarBotonSiguiente] = useState(false);
 
   const verificarRespuesta = () => {
+    var esCorrecta =  "";
 
-    if (opcionSeleccionada === actividad.respuesta_correcta) {
+    if (normalizarTexto(opcionSeleccionada) === normalizarTexto(actividad.respuesta_correcta)) {
       setEstadoRespuesta("correcta");
+      esCorrecta = true
       aumentarContador()
     } else {
       setEstadoRespuesta("incorrecta");
+      esCorrecta = false
     }
+
+    // Calcular tiempo en segundos
+    const tiempoResolucion = (new Date() - new Date(inicioPregunta)) / 1000;
+
+    //Guardar resultados
+    guardarResultados(actividad, opcionSeleccionada, esCorrecta, tiempoResolucion )
+
     //Mostrar botón para volver tras 3 segundos
     setTimeout(() => setMostrarBotonSiguiente(true), 3000);
   };
@@ -36,6 +46,10 @@ export default function ChallengeOption({ actividad, aumentarContador, siguiente
 
   const manejarEnvio = () => {
     siguientePregunta()
+  };
+
+  const normalizarTexto = (texto) => {
+    return texto.replace(/['"]+/g, '').trim().toLowerCase();
   };
 
   return (
@@ -57,9 +71,9 @@ export default function ChallengeOption({ actividad, aumentarContador, siguiente
                     elevation={opcionSeleccionada === opcion ? 6 : 1}
                     className={`option-card
                         ${opcionSeleccionada === opcion ? "selected" : ""}
-                        ${estadoRespuesta && opcion === actividad.respuesta_correcta ? "correct-answer" : ""}
-                        ${estadoRespuesta && opcionSeleccionada === opcion && opcion !== actividad.respuesta_correcta ? "incorrect-answer" : ""}
-                    `}                
+                        ${estadoRespuesta && normalizarTexto(opcion) === normalizarTexto(actividad.respuesta_correcta) ? "correct-answer" : ""}
+                        ${estadoRespuesta && opcionSeleccionada === opcion && normalizarTexto(opcionSeleccionada) !== normalizarTexto(actividad.respuesta_correcta) ? "incorrect-answer" : ""}
+                    `}             
                     onClick={() => !estadoRespuesta && handleSeleccion(opcion)}
                 >
                     <Typography>{opcion}</Typography>

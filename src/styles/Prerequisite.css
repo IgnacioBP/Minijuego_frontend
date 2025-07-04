@@ -2,16 +2,16 @@
   max-width: 70%;
   min-height: 100vh;
 
-  margin: 0 auto; /* centra horizontalmente */
+  margin: 0 auto; 
   display: flex;
   flex-direction: column;
-  justify-content: center; /* centra verticalmente */
+  justify-content: center; 
   align-items: center;
 
   background-color: #d9dbea;
   box-sizing: border-box;
-  padding: 40px 20px; /* más espacio interno */
-  gap: 32px; /* espacio entre hijos, si usas gap */
+  padding: 40px 20px; 
+  gap: 32px; 
 }
 
 
@@ -24,6 +24,8 @@
   align-items: center;
   justify-content: center;
   line-height: 1.4;
+  border: 2px solid #24223d !important;
+
 }
 
 .chat-button.complete{
@@ -37,25 +39,33 @@
 }
 
 
+
+
+
 .challenge-button {
+  width: 50% ;
+  height: 100px;
   font-size: 1.2rem;
-  padding: 16px 32px;
-  border: 2px solid #6c63ff !important; /* color secundario personalizado */
-  color: #090733 !important;
-  background-color: grey;
+  padding: 16px 32px !important;
+  
+  border: 2px solid #24223d !important;
+  color: rgb(0, 0, 0) !important;
+  opacity: 1 !important;
+
   border-radius: 12px;
   transition: all 0.3s ease;
-  cursor: pointer;
   text-align: center;
-  width: 100%;
-  max-width: 400px;
+
+}
+.challenge-button:disabled {
+  cursor: not-allowed !important;
+}
+.challenge-button:enabled {
+  background-color: #ebf705;
+  cursor: pointer;
 }
 
 .challenge-button:hover:enabled {
-  background-color: #212128;
-  color: rgb(242, 255, 0);
+  background-color: #f79a05;
 }
 
-.challenge-button:disabled {
-  cursor: not-allowed;
-}
