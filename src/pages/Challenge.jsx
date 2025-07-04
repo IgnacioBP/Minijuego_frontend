@@ -200,8 +200,8 @@ export default function Challenge() {
   const guardarResultados = async (actividad, seleccionJugador, acierto,tiempoResolucion) => {
     const token = localStorage.getItem("token");
 
-    await fetch("http://localhost:8000/api/guardar-respuesta-desafio/", {
-    //await fetch("https://mm-minigame1-f0cff7eb7d42.herokuapp.com/api/guardar-respuesta-desafio/", {
+    //await fetch("http://localhost:8000/api/guardar-respuesta-desafio/", {
+    await fetch("https://mm-minigame1-f0cff7eb7d42.herokuapp.com/api/guardar-respuesta-desafio/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
