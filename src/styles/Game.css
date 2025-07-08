@@ -154,6 +154,9 @@
     margin-left: 16px;
     max-width: 50%;
 }
+.chat-bubble p {
+  white-space: pre-line;
+}
 
 .activity-bubble {
     padding: 16px;
