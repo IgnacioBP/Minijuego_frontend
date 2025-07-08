@@ -17,6 +17,24 @@ export default function ChallengeOption({ actividad, aumentarContador, siguiente
   const [estadoRespuesta, setEstadoRespuesta] = useState(null); // "correcta" o "incorrecta"
   const [opcionSeleccionada, setOpcionSeleccionada] = useState(null);
   const [mostrarBotonSiguiente, setMostrarBotonSiguiente] = useState(false);
+  const [opcionesDesordenadas, setOpcionesDesordenadas] = useState([]);
+
+  // Función para desordenar un array
+  const desordenarArray = (array) => {
+    const arrayDesordenado = [...array];
+    for (let i = arrayDesordenado.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arrayDesordenado[i], arrayDesordenado[j]] = [arrayDesordenado[j], arrayDesordenado[i]];
+    }
+    return arrayDesordenado;
+  };
+
+  // Desordenar opciones cuando cambia la actividad
+  useEffect(() => {
+    if (actividad?.opciones) {
+      setOpcionesDesordenadas(desordenarArray(actividad.opciones));
+    }
+  }, [actividad]);
 
   const verificarRespuesta = () => {
     var esCorrecta =  "";
@@ -64,7 +82,7 @@ export default function ChallengeOption({ actividad, aumentarContador, siguiente
         {/* Opciones con tamaño uniforme   columns={10} ietms cambiar a 5*/}
         <Grid container columns={10} spacing={2} sx={{width:"100%"}}>
             
-            {actividad?.opciones?.map((opcion, index) => (
+            {opcionesDesordenadas?.map((opcion, index) => (
             <Grid item size={10} key={index}>
                 <Box height="90%">
                 <Paper

@@ -21,8 +21,6 @@ import ActivityCompleteSentence from "./Activity_Components/ActivityCompleteSent
 import ActivityOptions from "./Activity_Components/ActivityOptions";
 
 
-
-
 const personajes = {
   1: {nombre: "Aquiles Burlo", avatar: "/avatars/npc1.jpg"},
   2: {nombre: "Clara Clickbait", avatar: "/avatars/npc2.jpg"},
@@ -76,7 +74,8 @@ export default function ChatGame() {
   
   //Para manejar boton de retorno a desafio
   const [complete, setComplete] = useState(false);
-
+  const [otherComplete, setOtherComplete] = useState(false);
+  const [otherID, setOtherID] = useState(null)
 
   // Obtener mensajes
   useEffect(() => {
@@ -178,25 +177,32 @@ export default function ChatGame() {
 
       if (currentItem.tipo_general === "actividad" && currentItem.orden_salida > actividadLimite) {
         setDisplayedMessages((prev) => [...prev, currentItem]);
+        setTyping(false)
         return;
       }
 
       setTyping(true);
 
+      let tiempoEspera = 3000;
+      if (currentItem.tipo_general === "mensaje" && currentItem.contenido) {
+        const numCaracteres = currentItem.contenido.length;
+        tiempoEspera = Math.min(Math.max(300 + numCaracteres * 50, 2000), 6000);
+      }
+
       const timeout = setTimeout(() => {
         // Mostrar escribiendo
-        setTyping(false);
+        setTyping(true);
         // Actualizar lista de mensjaes mostrados
         setDisplayedMessages((prev) => [...prev, allMessages[currentIndex]]);
         // Mover indice
         setCurrentIndex((prev) => prev + 1);
         
         if (currentItem.tipo_general === "mensaje"){
-           // Guardar progrso del chat
-          const etapaKey = `etapa_${etapaId}`;
+          // Guardar progrso del chat
           const progresoActual = JSON.parse(localStorage.getItem("progresoUsuario"));
           const etapaProgreso = progresoActual[etapaKey]
           const maximo_ultimo = Math.max(etapaProgreso.ultimo_chat_mostrado, currentItem.orden_salida );
+
           const nuevoProgresoEtapa = {
             ultimo_chat_mostrado: maximo_ultimo,
             ultima_actividad_completada: etapaProgreso.ultima_actividad_completada,
@@ -209,7 +215,7 @@ export default function ChatGame() {
             [etapaKey]: nuevoProgresoEtapa 
           };
           
-           localStorage.setItem("progresoUsuario", JSON.stringify(nuevoProgreso));
+          localStorage.setItem("progresoUsuario", JSON.stringify(nuevoProgreso));
 
           if (currentItem.final){
             const token = localStorage.getItem("token");
@@ -226,7 +232,7 @@ export default function ChatGame() {
         }
        
 
-      }, 3000); // Tiempo de espera entre mensajes
+      }, tiempoEspera); // Tiempo de espera entre mensajes
 
       return () => clearTimeout(timeout);
     
@@ -244,7 +250,6 @@ export default function ChatGame() {
     const progresoGuardado = localStorage.getItem("progresoUsuario");
     if (progresoGuardado) {
       setProgreso(JSON.parse(progresoGuardado));
-      console.log(progresoGuardado)
       const pG = JSON.parse(progresoGuardado);
       const etapaKey = `etapa_${etapaId}`;
       const etapaProgreso = pG[etapaKey]
@@ -254,6 +259,38 @@ export default function ChatGame() {
       }
     }
   }, [etapaId]);
+
+  useEffect(() => {
+
+    let parsedNiveles = [];
+
+    try {
+      const stored = localStorage.getItem("nivelesHabilitados");
+      if (stored) {
+        parsedNiveles = JSON.parse(stored);
+      }
+    } catch (e) {
+      console.error("Error al parsear nivelesHabilitados:", e);
+    }
+
+
+    if (Array.isArray(parsedNiveles) && etapaId) {
+      const otraEtapaId = parsedNiveles.find(id => id !== etapaId);
+
+      if (otraEtapaId !== undefined) {
+        const progresoGuardado = localStorage.getItem("progresoUsuario");
+        const pG = JSON.parse(progresoGuardado);
+
+        const etapa = `etapa_${parsedNiveles[otraEtapaId]}`;
+        const progresoOtraEtapa = pG[etapa];
+
+        if (progresoOtraEtapa) {
+          setOtherComplete(progresoOtraEtapa.final_alcanzado);
+          setOtherID(parsedNiveles[otraEtapaId]);
+        }
+      }
+    }
+  }, [nivelesHabilitados,etapaId]);
 
 
 
@@ -354,11 +391,23 @@ export default function ChatGame() {
                 };
                 
                 if (mostrado !== true){
-                  setDisplayedMessages((prev) => [...prev, comentarioBubble]);
+
+                  //Calcular tiempor correspondiente al comentario 
+                  const numCaracteres = comentario.length;
+                  const tiempoEspera = Math.min(Math.max(300 + numCaracteres * 50, 2000), 6000);
+
+                  setTyping(true);
 
                   setTimeout(() => {
-                    setCurrentIndex((prev) => prev + 1);
-                  }, 3000);
+                    setDisplayedMessages((prev) => [...prev, comentarioBubble]);
+                    setTyping(false);
+
+                    // Avanzar al siguiente mensaje
+                    setTimeout(() => {
+                      setCurrentIndex((prev) => prev + 1);
+                    }, 1000); 
+                  }, tiempoEspera);
+
                 }
                   
               },
@@ -376,15 +425,42 @@ export default function ChatGame() {
           })}
           
           
-          {complete && (
-            <div style={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}>
-              <Button 
-                variant="contained" 
-                onClick={() => navigate("/juego/requisito")}
-                sx={{ textTransform: "none", borderRadius: "20px" }}
-              >
-                Volver a la ventana de inicio
-              </Button>
+          {(complete || otherComplete) && complete && (
+            <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginTop: "2rem" }}>
+              {/* Botón para ir al otro chat */}
+              {!otherComplete && (
+                <Button
+                  variant="contained"
+                  onClick={() => navigate(`/juego/${otherID}`)}
+                  sx={{ 
+                    textTransform: "none", 
+                    borderRadius: "20px",
+                    fontSize: "1.1rem",
+                  }}
+                >
+                  Ir al chat con {personajes[otherID].nombre}
+                </Button>
+              )}
+              
+              {/* Botón para ir al desafío (amarillo) */}
+              {otherComplete && (
+                <Button
+                  variant="contained"
+                  onClick={() => navigate("/juego/requisito")}
+                  sx={{ 
+                    textTransform: "none", 
+                    borderRadius: "20px",
+                    fontSize: "1.1rem",
+                    backgroundColor: "#FFC107", // Amarillo
+                    color: "#000", // Texto negro para mejor contraste
+                    "&:hover": {
+                      backgroundColor: "#FFB300", // Amarillo más oscuro al hover
+                    }
+                  }}
+                >
+                  Ir al desafío
+                </Button>
+              )}
             </div>
           )}
 

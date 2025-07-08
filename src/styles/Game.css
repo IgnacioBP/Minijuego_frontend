@@ -119,7 +119,9 @@
     width: 60%;
     display: flex;              /* ← importante */
     flex-direction: column;     /* ← permite dividir header, mensajes, botón */
-    height: 100vh;  
+    height: 100vh;
+    border: 2px solid; 
+    border-color : rgb(109, 109, 109)
 }
 
 .chat-header {

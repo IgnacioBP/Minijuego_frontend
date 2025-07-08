@@ -12,8 +12,6 @@ export default function ActivityOptions({ actividad, onResponder, disabled }) {
   // Si la actividad ya fue respondida, pre-cargar esa info
   useEffect(() => {
     if (actividad.respuesta_usuario) {
-
-
       const correcta = actividad.respuesta_usuario.es_correcta;
 
       setSeleccion(actividad.respuesta_usuario.seleccion);

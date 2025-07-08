@@ -1,9 +1,10 @@
 
-import {useEffect, useState} from "react";
+import {useEffect, useState, useRef} from "react";
 import "../styles/Challenge.css";
 import ChallengeOption from "./Challenge_Activities/ChallengeOption";
 import ChallengeCompleteSentence from "./Challenge_Activities/ChallengeCompleteSentence";
 import ChallengeFinal from "./ChallengeFinal";
+import ChallengeTitle from "./Challenge_Activities/ChallengeNewsTitle";
 
 
 export default function Challenge() {
@@ -22,6 +23,9 @@ export default function Challenge() {
 
   //Conteo de respuestas correctas
   const [respuestasCorrectas, setRespuestasCorrectas] = useState(0);
+
+  //Garantiza que salgo al menos una de redactar
+  const registroTipos = useRef([]);
 
 
   //Determinacion puntaje
@@ -140,7 +144,26 @@ export default function Challenge() {
     setRespuestasCorrectas(prev => prev + 1);
   };
 
- 
+  
+  const obtenerTipoActividad = () => {
+    const esUltimaPregunta = numeroPregunta === cantidad_preguntas;
+    const hayDeTitulo = registroTipos.current.includes("escribir_respuesta");
+
+    let tipoSeleccionado;
+
+    if (esUltimaPregunta && !hayDeTitulo) {
+      tipoSeleccionado = "escribir_respuesta"; // Forzar esta
+    } else {
+      const tiposDisponibles = ["opcion_multiple", "completar_oracion", "escribir_respuesta"];
+      tipoSeleccionado = tiposDisponibles[Math.floor(Math.random() * tiposDisponibles.length)];
+    }
+
+    // Guardar el tipo en la lista
+    registroTipos.current.push(tipoSeleccionado);
+
+    return tipoSeleccionado;
+  };
+
   //Funcion para hacer llamado al back y obtener una pregunta
   const obtenerPregunta = async () => {
       if (!pregunta && numeroPregunta <= cantidad_preguntas) {
@@ -159,9 +182,11 @@ export default function Challenge() {
       setDificulty(etapaProgreso) 
 
       // Determinar aleatoriamente el tipo de actividad
-      const tiposActividad = ["opcion_multiple", "completar_oracion"];
-      const tipo_act = tiposActividad[Math.floor(Math.random() * tiposActividad.length)];
-      
+      //const tiposActividad = ["opcion_multiple", "completar_oracion", "escribir_respuesta"];
+      //const tipo_act = tiposActividad[Math.floor(Math.random() * tiposActividad.length)];
+      //garantiza una actividad de escribir un titulo
+      const tipo_act = obtenerTipoActividad()
+
       try {
         //const response = await fetch("http://localhost:8000/api/generar-pregunta/", {
         const response = await fetch("https://mm-minigame1-f0cff7eb7d42.herokuapp.com/api/generar-pregunta/", {
@@ -180,6 +205,7 @@ export default function Challenge() {
         if (!response.ok) {
           throw new Error("Error al obtener la pregunta");
         }
+        console.log("RESPUESTA ",response)
 
         const data = await response.json();
         data.tipo = tipo_act; // añade el tipo
@@ -197,8 +223,23 @@ export default function Challenge() {
     }
   }       
   //Guardar respuesta
-  const guardarResultados = async (actividad, seleccionJugador, acierto,tiempoResolucion) => {
+  const guardarResultados = async (actividad, seleccionJugador, acierto,tiempoResolucion, puntos_feedback = null) => {
+
     const token = localStorage.getItem("token");
+
+    const cuerpo ={
+        tema: theme,
+        pregunta: actividad.pregunta,
+        dificultad: dificulty,
+        opciones: actividad.opciones,
+        respuesta_correcta: actividad.respuesta_correcta,
+        respuesta_jugador: seleccionJugador,
+        es_correcta: acierto
+    }
+
+    if (puntos_feedback !== null ){
+      cuerpo["puntaje"]= puntos_feedback
+    }
 
     //await fetch("http://localhost:8000/api/guardar-respuesta-desafio/", {
     await fetch("https://mm-minigame1-f0cff7eb7d42.herokuapp.com/api/guardar-respuesta-desafio/", {
@@ -207,29 +248,25 @@ export default function Challenge() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify({
-        tema: theme,
-        pregunta: actividad.pregunta,
-        dificultad: dificulty,
-        opciones: actividad.opciones,
-        respuesta_correcta: actividad.respuesta_correcta,
-        respuesta_jugador: seleccionJugador,
-        es_correcta: acierto
-      })
+      body: JSON.stringify(cuerpo)
     });
 
     //Registro de datos del desafio general
-    const setting = pointSettings[dificulty];
-    const bono = acierto ?  calcularBono(setting, tiempoResolucion) : 0
-    const puntaje =  acierto ? setting.puntos : 0
-    guardarPuntaje(puntaje, bono, setting.puntos)
+    if (puntos_feedback !== null ){
+      guardarPuntaje(puntos_feedback, 0, 50)
+    } 
+    else{
+      const setting = pointSettings[dificulty];
+      const bono = acierto ?  calcularBono(setting, tiempoResolucion) : 0
+      const puntaje =  acierto ? setting.puntos : 0
+      guardarPuntaje(puntaje, bono, setting.puntos)
+    }
 
 
     //Actualizar la dificultad
     manejo_dificultad(theme, acierto)
-    
-
   };
+
 
   const manejo_dificultad = (etapa, acierto) => {
     const progreso = JSON.parse(localStorage.getItem("progresoUsuario"));
@@ -318,6 +355,18 @@ export default function Challenge() {
           siguientePregunta={siguientePregunta}
           guardarResultados={guardarResultados}
           inicioPregunta={inicioPregunta}
+        />
+      )}
+
+
+      {pregunta.tipo === "escribir_respuesta" && (
+        <ChallengeTitle
+          actividad={pregunta}
+          aumentarContador={aumentarContador}
+          siguientePregunta={siguientePregunta}
+          guardarResultados={guardarResultados}
+          inicioPregunta={inicioPregunta}
+          theme={theme}
         />
       )}
 

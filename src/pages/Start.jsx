@@ -35,15 +35,17 @@ export default function Start() {
       <Button
         variant="contained"
         onClick={() => {
-          const datosUsuario = {
-            usuarioId: 1,
-          };
-          localStorage.setItem("datosUsuario", JSON.stringify(datosUsuario));
           navigate("/login");
         }}
-        sx={{ borderRadius: "20px", textTransform: "none" }}
+        sx={{ 
+          borderRadius: "20px", 
+          textTransform: "none",
+          fontSize: "1.5rem",
+          padding: "16px 32px",
+          width: "20%",
+        }}
       >
-        Ir al Juego
+        Comenzar
       </Button>
     </Box>
   );

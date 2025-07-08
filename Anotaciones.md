@@ -1,11 +1,14 @@
-5/6/2025
-> (NO HECHO) Revisar codigo de juegos y ver codigo que se pueda sacar a otro archivo para evitar repeticion
+# COSAS A MEJORAR  
 
-> (HECHO) Implementar correctamente segundo tipo de juego: Completar opciones. El funcionamiento del juego sera el siguiente el enunciado mostrara una oracion la cual debe ser completada por el usuario mediante la seleccion de una palabra o palabras que haya en las opciones, estas opciones tendran un numero de seis opciones ya que las palabras ocupan poco espacio comparado a las respuestas mas largas del uego de Opciones
+1.- Agrandar boton (LISTO)
+2.- Correccion de ortografia (LISTO)
+3.- Ajustar velocidad (LISTO)
+6.- Modificar flujo a desafio para mas naturalidad (LISTO)
+7.- Randomizacion de opciones (LISTO)
 
-8/6/2025
-> (NO HECHO) Revisar habilitar solo unos pocos chats
 
-> (NO HECHO) Crear pestaña previa (instrucciones)
+4.- preguntar antes de continuar
 
-> (NO HECHO) Crear pestaaña de inicio de desafio y desafio
+5.- Agregar emojis a chat de Aquiles  (LISTO)
+6.- NUEVA ACTIVIDAD DE DESAFIO: (LISTO.....O AL MENOS ESO CREO)
+        -> Generar texto y que la persona escriba un titulo.

@@ -22,6 +22,7 @@ export default function Login() {
 
       const data = await response.json();
       localStorage.setItem("token", data.access);
+      console.log(data.access)
 
       navigate("/loading"); 
     } catch (error) {

@@ -9,7 +9,7 @@ export default function LoadingScreen() {
       // Simula un "delay"
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      
+    
       try {
         //Recuperar progrso de usaurio
         const token = localStorage.getItem("token")

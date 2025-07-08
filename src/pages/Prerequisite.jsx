@@ -39,7 +39,7 @@ export default function Prerequisite(){
     <Box className="buttons-container">
       {/* SECCION DE TITULO O Texto DE INSTRUCCION */}
       <Typography variant="h4">
-        Elige que por cual chat iniciar
+        Elige por cuál chat comenzar.
       </Typography>
 
       {/* Texto explicativo */}
