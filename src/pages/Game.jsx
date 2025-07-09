@@ -261,6 +261,8 @@ export default function ChatGame() {
   }, [etapaId]);
 
   useEffect(() => {
+    setOtherComplete(false);
+    setOtherID(null);
 
     let parsedNiveles = [];
 
@@ -275,18 +277,19 @@ export default function ChatGame() {
 
 
     if (Array.isArray(parsedNiveles) && etapaId) {
-      const otraEtapaId = parsedNiveles.find(id => id !== etapaId);
+      const etapaIdNum = parseInt(etapaId, 10);
+      const otraEtapaId = parsedNiveles.find(id => id !== etapaIdNum);
 
       if (otraEtapaId !== undefined) {
         const progresoGuardado = localStorage.getItem("progresoUsuario");
+        
         const pG = JSON.parse(progresoGuardado);
-
-        const etapa = `etapa_${parsedNiveles[otraEtapaId]}`;
-        const progresoOtraEtapa = pG[etapa];
+        const etapaKey = `etapa_${otraEtapaId}`;
+        const progresoOtraEtapa = pG[etapaKey];
 
         if (progresoOtraEtapa) {
           setOtherComplete(progresoOtraEtapa.final_alcanzado);
-          setOtherID(parsedNiveles[otraEtapaId]);
+          setOtherID(otraEtapaId);
         }
       }
     }
