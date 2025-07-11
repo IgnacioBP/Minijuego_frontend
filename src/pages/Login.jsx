@@ -37,7 +37,7 @@ export default function Login() {
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      sx={{ backgroundColor: "#f0f4f8" }}
+      sx={{ backgroundColor: "#e9e0e0" }}
     >
       <Typography variant="h4" gutterBottom>
         Iniciar sesión

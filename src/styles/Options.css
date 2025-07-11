@@ -78,10 +78,10 @@
 /* Botón de volver */
 .back-button {
     margin-top: 24px;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease !important;
 }
 
 .back-button:hover {
-    background-color: #e0e0e0;
+    background-color: #1290f7    !important;
 }
 

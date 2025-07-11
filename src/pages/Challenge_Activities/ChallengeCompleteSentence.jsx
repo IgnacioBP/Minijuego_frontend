@@ -183,6 +183,4 @@ export default function ChallengeCompleteSentence({ actividad, aumentarContador,
             )}
         </Box>
     );
-
-
 }

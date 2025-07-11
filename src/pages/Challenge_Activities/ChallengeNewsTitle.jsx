@@ -87,7 +87,7 @@ export default function ChallengeTitle({ actividad, aumentarContador, siguienteP
       } catch (error) {
     console.error("Error al enviar respuesta:", error);
     } finally {
-      setEnviando(false);
+
     }
   };
 
@@ -173,7 +173,6 @@ export default function ChallengeTitle({ actividad, aumentarContador, siguienteP
             </Button>
           </Box>
         )}
-
 
     </Box>
   );

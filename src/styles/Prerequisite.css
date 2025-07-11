@@ -61,7 +61,7 @@
   cursor: not-allowed !important;
 }
 .challenge-button:enabled {
-  background-color: #ebf705;
+  background-color: #FFC107;
   cursor: pointer;
 }
 

@@ -329,7 +329,30 @@ export default function Challenge() {
     );
   }
 
-  if (!pregunta) return <p>Cargando pregunta...</p>;
+  if (!pregunta) return (
+    // <p>Cargando pregunta...</p>);
+    <div style={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <div className="loader-4">
+        <div className="wave-container">
+            <div className="wave-bar"></div>
+            <div className="wave-bar"></div>
+            <div className="wave-bar"></div>
+            <div className="wave-bar"></div>
+            <div className="wave-bar"></div>
+            <div className="wave-bar"></div>
+            <div className="wave-bar"></div>
+        </div>
+        <div className="wave-text">Cargando siguiente pregunta</div>
+      </div>
+    </div>
+  )
+
+
+
+
+
+
+
 
   return (
      <div>

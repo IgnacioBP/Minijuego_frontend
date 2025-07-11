@@ -1,7 +1,7 @@
 import "../styles/Game.css";
 import {saveProgress} from "../utils/saveProgress"; 
 
-import {useEffect, useState} from "react";
+import {useEffect, useState, Fragment} from "react";
 import {
   Avatar,
   Box,
@@ -9,6 +9,7 @@ import {
   Grid,
   Typography,
   Paper,
+  TextField,
 } from "@mui/material";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import {useParams} from "react-router-dom";
@@ -75,7 +76,11 @@ export default function ChatGame() {
   //Para manejar boton de retorno a desafio
   const [complete, setComplete] = useState(false);
   const [otherComplete, setOtherComplete] = useState(false);
-  const [otherID, setOtherID] = useState(null)
+  const [otherID, setOtherID] = useState(null);
+
+  //Para chat de usuario
+  const [esperandoComentario, setEsperandoComentario] = useState(false);
+  const [comentarioUsuario, setComentarioUsuario] = useState("");
 
   // Obtener mensajes
   useEffect(() => {
@@ -113,19 +118,34 @@ export default function ChatGame() {
           }
 
           const mensajesYaMostrados = [];
+          let siguienteIndice = 0;
 
-          data.forEach((item) => {
+          data.forEach((item,index) => {
             if (item.tipo_general === "mensaje") {
               if (item.orden_salida <= (etapaProgreso.ultimo_chat_mostrado || 0)) {
                 mensajesYaMostrados.push(item);
+                siguienteIndice = index + 1;
+
+                if (item.antes_comentario && item.contenido_comentario) {
+                  console.log("ENTRO AQUI")
+                  mensajesYaMostrados.push({
+                    tipo_general: "mensaje",
+                    contenido: item.contenido_comentario,
+                    orden_salida: item.orden_salida + 0.1,
+                    autor: "usuario", // ESTO ES IMPORTANTE
+                  });
+                }
               }
+
+              
             } else if (item.tipo_general === "actividad") {
               if (item.orden_salida <= (etapaProgreso.ultima_actividad_completada || 0)) {
                 mensajesYaMostrados.push(item);
+                siguienteIndice = index + 1;
 
                 // Si tiene una respuesta pasada, agregar el comentario como nuevo mensaje
                 if (item.respuesta_usuario) {
-                  console.log("respuesta obtenida "+item.respuesta_usuario.es_correcta)
+                  // console.log("respuesta obtenida "+item.respuesta_usuario.es_correcta)
                   const comentario = item.respuesta_usuario.es_correcta
                     ? item.comentario_correcto
                     : item.comentario_incorrecto;
@@ -142,7 +162,7 @@ export default function ChatGame() {
           console.log("DATA A RENDERIZAR")
           console.log(mensajesYaMostrados)
           setDisplayedMessages(mensajesYaMostrados);
-          setCurrentIndex(mensajesYaMostrados.length);
+          setCurrentIndex(siguienteIndice);
         }
         
       } catch (error) {
@@ -180,6 +200,26 @@ export default function ChatGame() {
         setTyping(false)
         return;
       }
+
+      console.log(currentItem)
+      if (currentItem.antes_comentario) {
+        if (currentItem.comentario) {
+          const comentarioPrevio = {
+            tipo_general: "mensaje",
+            contenido: currentItem.contenido_comentario,
+            orden_salida: currentItem.orden_salida + 0.1,
+            autor: "usuario",
+          };
+          setDisplayedMessages((prev) => [...prev, currentItem, comentarioPrevio]);
+          setCurrentIndex((prev) => prev + 1); // avanzar automáticamente
+        } else {
+          setDisplayedMessages((prev) => [...prev, currentItem]);
+          setEsperandoComentario(true);
+          setTyping(false);
+        }
+        return;
+      }
+      console.log("POST IF")
 
       setTyping(true);
 
@@ -297,6 +337,54 @@ export default function ChatGame() {
 
 
 
+ //Para comentarios usuario
+const handleComentarioEnviar = async () => {
+  const comentario = comentarioUsuario.trim();
+  if (!comentario) return;
+
+  setEsperandoComentario(false);
+  setComentarioUsuario(""); // limpia input
+  setTyping(true);
+
+  try {
+    //const response = await fetch("http://localhost:8000/api/guardar-comentario/", {
+    const response = await fetch("https://mm-minigame1-f0cff7eb7d42.herokuapp.com/api/guardar-comentario/", {  
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        etapa_id: etapaId,
+        comentario: comentario
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al guardar comentario");
+    }
+
+    // Si se guardó correctamente, agrega la burbuja del usuario
+    const comentarioBubble = {
+      tipo_general: "mensaje",
+      contenido: comentario,
+      orden_salida: allMessages[currentIndex]?.orden_salida + 0.1 || 0,
+      autor: "usuario"
+    };
+
+    setDisplayedMessages((prev) => [...prev, comentarioBubble]);
+
+    // Simula que el personaje escribe después del comentario
+    setTimeout(() => {
+      setTyping(false);
+      setCurrentIndex((prev) => prev + 1); // avanza al siguiente mensaje
+    }, 2000);
+  } catch (error) {
+    console.error("No se pudo guardar el comentario:", error);
+    setTyping(false);
+  }
+};
+
 
   return (
     <Grid container className="chat-container">
@@ -373,9 +461,20 @@ export default function ChatGame() {
           {/* Mensajes mostrados */}
           
           {displayedMessages.map((item, index) => {
-          if (item.tipo_general === "mensaje") {
-            return <ChatBubble key={index} text={item.contenido} />;
-          }
+          // if (item.tipo_general === "mensaje") {
+          //   return <ChatBubble key={index} text={item.contenido} />;
+          // }
+
+         if (item.tipo_general === "mensaje") {
+          return (
+            <ChatBubble 
+              key={index}
+              text={item.contenido} 
+              autor={item.autor || "npc"} 
+            />
+          );
+        }
+
 
           // Si es actividad
           const actividadCompletada = 
@@ -454,10 +553,10 @@ export default function ChatGame() {
                     textTransform: "none", 
                     borderRadius: "20px",
                     fontSize: "1.1rem",
-                    backgroundColor: "#FFC107", // Amarillo
+                    backgroundColor: "#FFC107", // Naranjo
                     color: "#000", // Texto negro para mejor contraste
                     "&:hover": {
-                      backgroundColor: "#FFB300", // Amarillo más oscuro al hover
+                      backgroundColor: "#FFB300", // Naranjo más oscuro al hover
                     }
                   }}
                 >
@@ -476,9 +575,56 @@ export default function ChatGame() {
               {personaje.nombre} está escribiendo{dots}
             </Typography>
           )}
-
           <div ref={bottomRef} />
         </div>
+
+          {esperandoComentario && (
+            <Typography
+              variant="subtitle2"
+              sx={{
+                color: "#555",
+                textAlign: "center",
+                mb: 1,
+                fontStyle: "italic",
+              }}
+            >
+              Escribe tu opinión para continuar...
+            </Typography>
+          )}
+
+
+        {/* Zona para escribir texto */}
+        <Box 
+          mt={2} 
+          display="flex" 
+          alignItems="center" 
+          justifyContent="center" 
+          gap={2} 
+          sx={{ width: "100%", padding: "1rem" }}
+        >
+          <TextField
+            label="Escribe tu opinión..."
+            variant="outlined"
+            value={comentarioUsuario}
+            onChange={(e) => setComentarioUsuario(e.target.value)}
+            rows={2}
+            fullWidth
+            disabled={!esperandoComentario}
+            sx={{
+              maxWidth: "80%",
+              backgroundColor: esperandoComentario ? "#fff" : "#eee",
+            }}
+          />
+
+          <Button
+            variant="contained"
+            onClick={handleComentarioEnviar}
+            disabled={!esperandoComentario || !comentarioUsuario.trim()}
+            sx={{ height: "fit-content" }}
+          >
+            Enviar
+          </Button>
+        </Box>
 
 
       </Grid>
@@ -488,9 +634,20 @@ export default function ChatGame() {
 
 
 
-function ChatBubble({ text }) {
+function ChatBubble({ text, autor = "npc" }) {
+  const esUsuario = autor === "usuario";
+
   return (
-    <Paper className="chat-bubble">
+    <Paper
+      className= {esUsuario ? "user-bubble" : "chat-bubble"}
+      sx={{
+        backgroundColor: esUsuario ? "#fc913a" : "#f5f5f5",
+        alignSelf: esUsuario ? "flex-end" : "flex-start",
+        maxWidth: "80%",
+        padding: "0.8rem",
+        marginBottom: "0.5rem",
+      }}
+    >
       <Typography variant="body2">{text}</Typography>
     </Paper>
   );

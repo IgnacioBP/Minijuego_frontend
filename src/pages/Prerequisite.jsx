@@ -22,7 +22,7 @@ export default function Prerequisite(){
   const etapa2Completada = progreso[`etapa_${nivelesHabilitados[1]}`]?.final_alcanzado === true;
 
   const desafioDesbloqueado = etapa1Completada && etapa2Completada;
-  console.log(desafioDesbloqueado)
+
 
   const levelLabels = {
     1:"Aquiles Burlo (Parodia)",

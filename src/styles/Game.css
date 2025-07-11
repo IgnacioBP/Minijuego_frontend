@@ -158,18 +158,12 @@
   white-space: pre-line;
 }
 
-.activity-bubble {
+.user-bubble {
+    background-color: #72ddf6dd !important;
+    color: rgb(30, 27, 27) !important;
     padding: 16px;
     border-radius: 16px !important;
     margin-bottom: 16px;
-    max-width: 40%;
-}
-
-.activity-bubble-button {
-    background-color: #74D5E4 !important;
-    color: black !important;
-    padding: 16px;
-    border-radius: 16px !important;
-    margin-bottom: 16px;
-    max-width: 40%;
+    margin-left: 16px;
+    max-width: 50%;
 }

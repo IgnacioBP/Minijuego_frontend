@@ -40,7 +40,7 @@ export default function Register() {
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      sx={{ backgroundColor: "#f3f3f3" }}
+      sx={{ backgroundColor: "#e9e0e0" }}
     >
       <Typography variant="h4" gutterBottom>Registro</Typography>
       <TextField

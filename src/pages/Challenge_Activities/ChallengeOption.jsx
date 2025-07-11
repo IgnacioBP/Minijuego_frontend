@@ -139,11 +139,15 @@ export default function ChallengeOption({ actividad, aumentarContador, siguiente
 
         {/* Botón de volver después del comentario */}
         {mostrarBotonSiguiente && (
-            <Box mt={3} sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
+          <Box mt={3} sx={{ 
+            width: "100%", 
+            display: "flex", 
+            justifyContent: "center", 
+            }}>
             <Button className="back-button" variant="contained" onClick={manejarEnvio}>
                 Siguiente
             </Button>
-            </Box>
+          </Box>
         )}
 
     </Box>
