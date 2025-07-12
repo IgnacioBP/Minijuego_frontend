@@ -12,7 +12,7 @@ import {useParams, useNavigate} from "react-router-dom";
 import "../../styles/CompleteSentence.css";
 
 
-export default function ChallengeCompleteSentence({ actividad, aumentarContador, siguientePregunta, guardarResultados, inicioPregunta }) {
+export default function ChallengeCompleteSentence({ actividad, aumentarContador, siguientePregunta, guardarResultados, inicioPregunta,avatar }) {
 
     const [opcionesSeleccionadas, setOpcionesSeleccionadas] = useState([]);
     const [estadoRespuesta, setEstadoRespuesta] = useState(null); // "correcta" o "incorrecta"
