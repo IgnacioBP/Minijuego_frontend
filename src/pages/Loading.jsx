@@ -4,7 +4,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 export default function LoadingScreen() {
   const navigate = useNavigate();
-    const [error, setError] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const fetchProgress = async () => {
@@ -17,6 +17,7 @@ export default function LoadingScreen() {
           // Simula delay
           await new Promise(resolve => setTimeout(resolve, 2000));
           const token = localStorage.getItem("token");
+          
           //const progresoRes = await fetch("http://localhost:8000/api/obtener-progreso/", {
           const progresoRes = await fetch("https://mm-minigame1-f0cff7eb7d42.herokuapp.com/api/obtener-progreso/", {
             method: "GET",

@@ -10,6 +10,7 @@ import Challenge from "./pages/Challenge";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ReturnLoading from "./pages/StartReturnLoading";
 
 import Start from "./pages/Start";
 
@@ -25,6 +26,7 @@ function App() {
         <Route path="/juego/desafio" element={<Challenge />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/return" element={<ReturnLoading />} />
       </Routes>
     </Router>
   );

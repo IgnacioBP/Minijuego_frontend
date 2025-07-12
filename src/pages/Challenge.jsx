@@ -7,6 +7,18 @@ import ChallengeFinal from "./ChallengeFinal";
 import ChallengeTitle from "./Challenge_Activities/ChallengeNewsTitle";
 
 
+const personajes = {
+  1: {nombre: "Aquiles Burlo", avatar: "/avatars/npc1.jpg"},
+  2: {nombre: "Clara Clickbait", avatar: "/avatars/npc2.jpg"},
+  3: {nombre: "Verónica Sesgada", avatar: "/avatars/npc3.jpg"},
+  4: {nombre: "Pancho Descontexto", avatar: "/npc4.png"},
+  5: {nombre: "Simón Suplente", avatar: "/npc5.png"},
+  6: {nombre: "Camila Montaje", avatar: "/npc6.png"},
+  7: {nombre: "Fabricio Invento", avatar: "/npc7.png"},
+};
+
+
+
 export default function Challenge() {
 
   //Obtener niveles habilitados
@@ -26,6 +38,9 @@ export default function Challenge() {
 
   //Garantiza que salgo al menos una de redactar
   const registroTipos = useRef([]);
+
+  //Seteo de avatar
+  const avatarRuta = personajes[theme]?.avatar;
 
 
   //Determinacion puntaje
@@ -147,14 +162,13 @@ export default function Challenge() {
   
   const obtenerTipoActividad = () => {
     const esUltimaPregunta = numeroPregunta === cantidad_preguntas;
-    const hayDeTitulo = registroTipos.current.includes("escribir_respuesta");
 
     let tipoSeleccionado;
 
-    if (esUltimaPregunta && !hayDeTitulo) {
-      tipoSeleccionado = "escribir_respuesta"; // Forzar esta
+    if (esUltimaPregunta) {
+      tipoSeleccionado = "escribir_respuesta"; // Forzar esta como ultima
     } else {
-      const tiposDisponibles = ["opcion_multiple", "completar_oracion", "escribir_respuesta"];
+      const tiposDisponibles = ["opcion_multiple", "completar_oracion"];
       tipoSeleccionado = tiposDisponibles[Math.floor(Math.random() * tiposDisponibles.length)];
     }
 
@@ -365,6 +379,7 @@ export default function Challenge() {
           siguientePregunta={siguientePregunta}
           guardarResultados={guardarResultados}
           inicioPregunta={inicioPregunta}
+          avatar={avatarRuta}
         />
       )}
 
@@ -378,10 +393,11 @@ export default function Challenge() {
           siguientePregunta={siguientePregunta}
           guardarResultados={guardarResultados}
           inicioPregunta={inicioPregunta}
+          avatar={avatarRuta}
         />
       )}
 
-
+      {/* PREGUNTA DE REDACTAR TIOTULO, RENDERIZADO DEFINIDO EN OTRO ARCHIVO */}
       {pregunta.tipo === "escribir_respuesta" && (
         <ChallengeTitle
           actividad={pregunta}
@@ -392,9 +408,6 @@ export default function Challenge() {
           theme={theme}
         />
       )}
-
-
     </div>
-
   );
 }

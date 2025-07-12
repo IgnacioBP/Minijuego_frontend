@@ -12,9 +12,9 @@ import {useParams, useNavigate} from "react-router-dom";
 import "../../styles/Options.css";
 
 
-export default function ChallengeOption({ actividad, aumentarContador, siguientePregunta, guardarResultados, inicioPregunta }) {
+export default function ChallengeOption({ actividad, aumentarContador, siguientePregunta, guardarResultados, inicioPregunta, avatar }) {
 
-  const [estadoRespuesta, setEstadoRespuesta] = useState(null); // "correcta" o "incorrecta"
+  const [estadoRespuesta, setEstadoRespuesta] = useState(null); 
   const [opcionSeleccionada, setOpcionSeleccionada] = useState(null);
   const [mostrarBotonSiguiente, setMostrarBotonSiguiente] = useState(false);
   const [opcionesDesordenadas, setOpcionesDesordenadas] = useState([]);
@@ -107,7 +107,7 @@ export default function ChallengeOption({ actividad, aumentarContador, siguiente
             <Fade in>
                 <Box className="feedback-bubble">
 
-                    <Avatar alt="personaje" src="/avatar.png" />
+                    <Avatar alt="personaje" src={avatar || "/npc.png"}/>
 
                     <Paper
                         className={`feedback-text ${

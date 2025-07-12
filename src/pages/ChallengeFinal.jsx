@@ -3,6 +3,9 @@ import { Box, Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import "../styles/ChallengeFinal.css";
 
+import Confetti from "react-confetti";
+import { useWindowSize } from 'react-use'
+
 export default function ChallengeFinal({  
   respuestasCorrectas, cantidad_preguntas, puntaje,
   puntajePregunta,  puntajeTiempo, puntajeObtenible,
@@ -10,7 +13,7 @@ export default function ChallengeFinal({
 }) {
 
   const navigate = useNavigate();
-
+  const { width, height } = useWindowSize();
 
   useEffect(() => {
     const enviarResultados = async () => {
@@ -61,12 +64,12 @@ export default function ChallengeFinal({
 
 
   const irAlInicio = () => {
-    navigate("/");
+    navigate("/return");
   };
 
   return (
     <Box className="challenge-final-container">
-
+      <Confetti width={width} height={height} recycle={false} numberOfPieces={600}/>
       <Typography variant="h3" className="challenge-title">
         ¡Terminaste!
       </Typography>

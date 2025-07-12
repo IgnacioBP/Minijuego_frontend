@@ -143,7 +143,7 @@ export default function ChallengeCompleteSentence({ actividad, aumentarContador,
                 <Fade in>
                     <Box className="feedback-bubble">
 
-                    <Avatar alt="personaje" src="/avatar.png" />
+                    <Avatar alt="personaje" src={avatar || "/npc.png"}/>
 
                     <Paper
                         className={`feedback-text ${

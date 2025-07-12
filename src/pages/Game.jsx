@@ -21,6 +21,16 @@ import ActivityBubble from "./Activity_Components/ActivityBubble";
 import ActivityCompleteSentence from "./Activity_Components/ActivityCompleteSentence";
 import ActivityOptions from "./Activity_Components/ActivityOptions";
 
+function playSound() {
+  try {
+    const audio = new Audio('/text_appear_sound.mp3');
+    audio.play().catch(error => {
+      console.warn('Error al reproducir audio:', error);
+    });
+  } catch (error) {
+    console.error('Error al crear el audio:', error);
+  }
+}
 
 const personajes = {
   1: {nombre: "Aquiles Burlo", avatar: "/avatars/npc1.jpg"},
@@ -198,10 +208,12 @@ export default function ChatGame() {
       if (currentItem.tipo_general === "actividad" && currentItem.orden_salida > actividadLimite) {
         setDisplayedMessages((prev) => [...prev, currentItem]);
         setTyping(false)
+        playSound();
         return;
       }
 
       console.log(currentItem)
+
       if (currentItem.antes_comentario) {
         if (currentItem.comentario) {
           const comentarioPrevio = {
@@ -219,7 +231,6 @@ export default function ChatGame() {
         }
         return;
       }
-      console.log("POST IF")
 
       setTyping(true);
 
@@ -230,12 +241,11 @@ export default function ChatGame() {
       }
 
       const timeout = setTimeout(() => {
-        // Mostrar escribiendo
-        setTyping(true);
+        // // Mostrar escribiendo
+        playSound();
+        // setTyping(true);
         // Actualizar lista de mensjaes mostrados
-        setDisplayedMessages((prev) => [...prev, allMessages[currentIndex]]);
-        // Mover indice
-        setCurrentIndex((prev) => prev + 1);
+        setDisplayedMessages((prev) => [...prev, currentItem]);
         
         if (currentItem.tipo_general === "mensaje"){
           // Guardar progrso del chat
@@ -268,9 +278,11 @@ export default function ChatGame() {
               token: token,
             });
             setTyping(false);
+            return;
           }
         }
-       
+        setCurrentIndex((prev) => prev + 1);
+        setTyping(false);
 
       }, tiempoEspera); // Tiempo de espera entre mensajes
 
@@ -338,52 +350,50 @@ export default function ChatGame() {
 
 
  //Para comentarios usuario
-const handleComentarioEnviar = async () => {
-  const comentario = comentarioUsuario.trim();
-  if (!comentario) return;
+  const handleComentarioEnviar = async () => {
+    const comentario = comentarioUsuario.trim();
+    if (!comentario) return;
 
-  setEsperandoComentario(false);
-  setComentarioUsuario(""); // limpia input
-  setTyping(true);
+    setEsperandoComentario(false);
+    setComentarioUsuario(""); // limpia input
+    setTyping(true);
 
-  try {
-    //const response = await fetch("http://localhost:8000/api/guardar-comentario/", {
-    const response = await fetch("https://mm-minigame1-f0cff7eb7d42.herokuapp.com/api/guardar-comentario/", {  
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${localStorage.getItem("token")}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        etapa_id: etapaId,
-        comentario: comentario
-      })
-    });
+    try {
+      //const response = await fetch("http://localhost:8000/api/guardar-comentario/", {
+      const response = await fetch("https://mm-minigame1-f0cff7eb7d42.herokuapp.com/api/guardar-comentario/", {  
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          etapa_id: etapaId,
+          comentario: comentario
+        })
+      });
 
-    if (!response.ok) {
-      throw new Error("Error al guardar comentario");
-    }
+      if (!response.ok) {
+        throw new Error("Error al guardar comentario");
+      }
 
-    // Si se guardó correctamente, agrega la burbuja del usuario
-    const comentarioBubble = {
-      tipo_general: "mensaje",
-      contenido: comentario,
-      orden_salida: allMessages[currentIndex]?.orden_salida + 0.1 || 0,
-      autor: "usuario"
-    };
+      // Si se guardó correctamente, agrega la burbuja del usuario
+      const comentarioBubble = {
+        tipo_general: "mensaje",
+        contenido: comentario,
+        orden_salida: allMessages[currentIndex]?.orden_salida + 0.1 || 0,
+        autor: "usuario"
+      };
 
-    setDisplayedMessages((prev) => [...prev, comentarioBubble]);
+      setDisplayedMessages((prev) => [...prev, comentarioBubble]);
 
-    // Simula que el personaje escribe después del comentario
-    setTimeout(() => {
-      setTyping(false);
+      // Simula que el personaje escribe después del comentario
       setCurrentIndex((prev) => prev + 1); // avanza al siguiente mensaje
-    }, 2000);
-  } catch (error) {
-    console.error("No se pudo guardar el comentario:", error);
-    setTyping(false);
-  }
-};
+    } catch (error) {
+
+      console.error("No se pudo guardar el comentario:", error);
+      setTyping(false);
+    }
+  };
 
 
   return (
@@ -501,6 +511,7 @@ const handleComentarioEnviar = async () => {
                   setTyping(true);
 
                   setTimeout(() => {
+                    playSound();
                     setDisplayedMessages((prev) => [...prev, comentarioBubble]);
                     setTyping(false);
 
@@ -548,7 +559,7 @@ const handleComentarioEnviar = async () => {
               {otherComplete && (
                 <Button
                   variant="contained"
-                  onClick={() => navigate("/juego/requisito")}
+                  onClick={() => navigate("/juego/desafio")}
                   sx={{ 
                     textTransform: "none", 
                     borderRadius: "20px",
@@ -560,7 +571,7 @@ const handleComentarioEnviar = async () => {
                     }
                   }}
                 >
-                  Ir al desafío
+                  Iniciar desafío
                 </Button>
               )}
             </div>
@@ -578,6 +589,7 @@ const handleComentarioEnviar = async () => {
           <div ref={bottomRef} />
         </div>
 
+          {/*Indicacion de escribir para responder al personaje */}
           {esperandoComentario && (
             <Typography
               variant="subtitle2"
@@ -607,6 +619,14 @@ const handleComentarioEnviar = async () => {
             variant="outlined"
             value={comentarioUsuario}
             onChange={(e) => setComentarioUsuario(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                if (esperandoComentario && comentarioUsuario.trim()) {
+                  handleComentarioEnviar();
+                }
+              }
+            }}
             rows={2}
             fullWidth
             disabled={!esperandoComentario}
