@@ -26,7 +26,7 @@ export default function ReturnLoading() {
         >
             <CircularProgress />
             <h2 style={{ marginTop: "1rem" }}>
-                Volviendo a inicio, gracias por jugar.
+                😊 Volviendo al inicio, gracias por jugar!! 😊
             </h2>
         </div>
     );

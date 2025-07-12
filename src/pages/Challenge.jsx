@@ -356,7 +356,7 @@ export default function Challenge() {
             <div className="wave-bar"></div>
             <div className="wave-bar"></div>
         </div>
-        <div className="wave-text">Cargando siguiente pregunta</div>
+        <div className="wave-text">Cargando pregunta ...</div>
       </div>
     </div>
   )
