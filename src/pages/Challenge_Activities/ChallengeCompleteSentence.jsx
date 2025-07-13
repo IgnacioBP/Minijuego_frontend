@@ -110,6 +110,26 @@ export default function ChallengeCompleteSentence({ actividad, aumentarContador,
                 </Typography>
             </Paper>
 
+            {/* Imagen */}
+            {actividad.url_imagen && (
+            <Box sx={{ textAlign: 'center', mb: 2 }}>
+                <img 
+                src={actividad.url_imagen} 
+                alt="Imagen de la actividad" 
+                style={{ 
+                    maxWidth: '20%', 
+                    height: '20%',
+                    borderRadius: '8px',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                }}
+                onError={(e) => {
+                    e.target.style.display = 'none';
+                }}
+                />
+            </Box>
+            )}
+
+
             {/* Opciones con tamaño uniforme   columns={10} ietms cambiar a 5*/}
             <Grid container columns={12} spacing={2} sx={{ width: "100%" }}>
                 {actividad?.opciones?.map((opcion, index) => {

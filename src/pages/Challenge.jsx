@@ -248,7 +248,8 @@ export default function Challenge() {
         opciones: actividad.opciones,
         respuesta_correcta: actividad.respuesta_correcta,
         respuesta_jugador: seleccionJugador,
-        es_correcta: acierto
+        es_correcta: acierto,
+        image: actividad.url_imagen
     }
 
     if (puntos_feedback !== null ){

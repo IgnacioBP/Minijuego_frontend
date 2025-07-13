@@ -38,6 +38,7 @@ export default function ChallengeTitle({ actividad, aumentarContador, siguienteP
       pregunta: `Escribe un título para la siguiente noticia aplicando: ${temasTexto[theme]}`,
       opciones: actividad.contenido,
       respuesta_correcta: null,
+      image: null
     }
     // Aumento contador de preguntas
     aumentarContador()
