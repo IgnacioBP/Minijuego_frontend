@@ -110,51 +110,61 @@ export default function ChallengeCompleteSentence({ actividad, aumentarContador,
                 </Typography>
             </Paper>
 
-            {/* Imagen */}
-            {actividad.url_imagen && (
-            <Box sx={{ textAlign: 'center', mb: 2 }}>
-                <img 
-                src={actividad.url_imagen} 
-                alt="Imagen de la actividad" 
-                style={{ 
-                    maxWidth: '20%', 
-                    height: '20%',
-                    borderRadius: '8px',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                }}
-                onError={(e) => {
-                    e.target.style.display = 'none';
-                }}
-                />
-            </Box>
-            )}
+            {/* Contenedor horizontal para imagen y opciones */}
+            <Box sx={{ display: "flex", width: "100%", mt: 2 }}>
 
+                {/* Opciones ocupan el otro 75% */}
+                 <Box sx={{ 
+                    width: actividad.url_imagen ? "70%" : "100%", 
+                    p: 2 
+                }}>
+                    <Grid container columns={12} spacing={2} sx={{ width: "100%" }}>
+                        {actividad?.opciones?.map((opcion, index) => {
+                        const cantidadOpciones = actividad.opciones.length;
+                        const cantidadColumnas = cantidadOpciones === 4 ? 6 :4;
 
-            {/* Opciones con tamaño uniforme   columns={10} ietms cambiar a 5*/}
-            <Grid container columns={12} spacing={2} sx={{ width: "100%" }}>
-                {actividad?.opciones?.map((opcion, index) => {
-                    const cantidadOpciones = actividad.opciones.length;
-                    const cantidadColumnas = cantidadOpciones === 4 ? 6 :4;
-
-                    return (
-                    <Grid item size={cantidadColumnas} key={index}>
-                        <Box height="90%">
-                        <Paper
-                        elevation={opcionesSeleccionadas.includes(opcion) ? 6 : 1}
-                        className={`option-card
-                            ${opcionesSeleccionadas.includes(opcion) ? "selected" : ""}
-                            ${estadoRespuesta && normalizarRespuesta(actividad.respuesta_correcta).includes(opcion) ? "correct-answer" : ""}
-                            ${estadoRespuesta && opcionesSeleccionadas.includes(opcion) && !normalizarRespuesta(actividad.respuesta_correcta).includes(opcion) ? "incorrect-answer" : ""}
-                        `}
-                        onClick={() => handleSeleccion(opcion)}
-                        >
-                        <Typography>{opcion}</Typography>
-                        </Paper>
-                        </Box>
+                        return (
+                        <Grid item size={cantidadColumnas} key={index}>
+                            <Box height="90%">
+                                <Paper
+                                elevation={opcionesSeleccionadas.includes(opcion) ? 6 : 1}
+                                className={`option-card
+                                    ${opcionesSeleccionadas.includes(opcion) ? "selected" : ""}
+                                    ${estadoRespuesta && normalizarRespuesta(actividad.respuesta_correcta).includes(opcion) ? "correct-answer" : ""}
+                                    ${estadoRespuesta && opcionesSeleccionadas.includes(opcion) && !normalizarRespuesta(actividad.respuesta_correcta).includes(opcion) ? "incorrect-answer" : ""}
+                                `}
+                                onClick={() => handleSeleccion(opcion)}
+                                >
+                                    <Typography>{opcion}</Typography>
+                                </Paper>
+                            </Box>
+                        </Grid>
+                        );
+                    })}
                     </Grid>
-                    );
-                })}
-            </Grid>
+                </Box>
+
+
+                {/* Imagen - solo se renderiza si existe */}
+                {actividad.url_imagen && (
+                    <Box sx={{ width: "30%", display: "flex", justifyContent: "center", alignItems: "center"}}>
+                        <img 
+                            src={actividad.url_imagen} 
+                            alt="Imagen de la actividad" 
+                            style={{ 
+                            maxWidth: '100%', 
+                            height: 'auto',
+                            borderRadius: '8px',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                            }}
+                            onError={(e) => {
+                            e.target.style.display = 'none';
+                            }}
+                        />
+                    </Box>
+                )}
+
+            </Box>
 
 
             {/* Botón o mensaje de resultado */}

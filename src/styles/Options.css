@@ -24,7 +24,7 @@
     border-radius: 12px;
     text-align: center;
     height: 100px;
-    padding: 10px;
+    padding: 5px !important;;
 }
 
 .option-card:hover {

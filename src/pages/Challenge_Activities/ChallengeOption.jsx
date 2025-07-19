@@ -79,49 +79,61 @@ export default function ChallengeOption({ actividad, aumentarContador, siguiente
             </Typography>
         </Paper>
 
-        {/* Imagen */}
-        {actividad.url_imagen && (
-          <Box sx={{ textAlign: 'center', mb: 2 }}>
-            <img 
-              src={actividad.url_imagen} 
-              alt="Imagen de la actividad" 
-              style={{ 
-                maxWidth: '20%', 
-                height: '20%',
-                borderRadius: '8px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-              }}
-              onError={(e) => {
-                e.target.style.display = 'none';
-              }}
-            />
-          </Box>
-        )}
+        <Box sx={{ display: "flex", width: "100%", mt: 2 }}>
 
-
-
-        {/* Opciones con tamaño uniforme   columns={10} ietms cambiar a 5*/}
-        <Grid container columns={10} spacing={2} sx={{width:"100%"}}>
-            
-            {opcionesDesordenadas?.map((opcion, index) => (
-            <Grid item size={10} key={index}>
-                <Box height="90%">
-                <Paper
-                    elevation={opcionSeleccionada === opcion ? 6 : 1}
-                    className={`option-card
-                        ${opcionSeleccionada === opcion ? "selected" : ""}
-                        ${estadoRespuesta && normalizarTexto(opcion) === normalizarTexto(actividad.respuesta_correcta) ? "correct-answer" : ""}
-                        ${estadoRespuesta && opcionSeleccionada === opcion && normalizarTexto(opcionSeleccionada) !== normalizarTexto(actividad.respuesta_correcta) ? "incorrect-answer" : ""}
-                    `}             
-                    onClick={() => !estadoRespuesta && handleSeleccion(opcion)}
-                >
-                    <Typography>{opcion}</Typography>
-                </Paper>
-                </Box>
-            </Grid>
-            ))}
-        </Grid>
         
+          {/* Opciones ocupan el otro 75% */}
+          <Box sx={{ 
+              width: actividad.url_imagen ? "70%" : "100%", 
+              p: 2 
+          }}>         
+          
+          {/* Opciones con tamaño uniforme   columns={10} ietms cambiar a 5*/}
+            <Grid container columns={10} spacing={2} sx={{width:"100%"}}>
+                
+                {opcionesDesordenadas?.map((opcion, index) => (
+                <Grid item size={10} key={index}>
+                    <Box height="90%">
+                    <Paper
+                        elevation={opcionSeleccionada === opcion ? 6 : 1}
+                        className={`option-card
+                            ${opcionSeleccionada === opcion ? "selected" : ""}
+                            ${estadoRespuesta && normalizarTexto(opcion) === normalizarTexto(actividad.respuesta_correcta) ? "correct-answer" : ""}
+                            ${estadoRespuesta && opcionSeleccionada === opcion && normalizarTexto(opcionSeleccionada) !== normalizarTexto(actividad.respuesta_correcta) ? "incorrect-answer" : ""}
+                        `}             
+                        onClick={() => !estadoRespuesta && handleSeleccion(opcion)}
+                    >
+                        <Typography>{opcion}</Typography>
+                    </Paper>
+                    </Box>
+                </Grid>
+                ))}
+            </Grid>
+          </Box>   
+
+
+          {/* Imagen */}
+          {actividad.url_imagen && (
+            <Box sx={{ width: "30%", display: "flex", justifyContent: "center", alignItems: "center"}}>
+              <img 
+                src={actividad.url_imagen} 
+                alt="Imagen de la actividad" 
+                style={{ 
+                  maxWidth: '100%', 
+                  height: 'auto',
+                  borderRadius: '8px',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                }}
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                }}
+              />
+            </Box>
+          )}
+        
+        </Box>
+
+
         {/* Botón o mensaje de resultado */}
         <Box mt={3} sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
             {estadoRespuesta ? (

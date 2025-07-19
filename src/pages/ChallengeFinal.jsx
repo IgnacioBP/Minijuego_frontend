@@ -40,14 +40,14 @@ export default function ChallengeFinal({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            puntaje_obtenido: puntaje,
-            puntaje_preguntas: puntajePregunta,
-            puntaje_tiempo: puntajeTiempo,
-            puntaje_maximo: puntajeObtenible,
-            hora_inicio: horaInicio?.toISOString(),
-            hora_termino: horaTermino?.toISOString(),
-            dificultades_iniciales: dificultadInicial,
-            dificultades_finales: registroFinal
+            total_score: puntaje,
+            question_score: puntajePregunta,
+            bonus_score: puntajeTiempo,
+            max_score: puntajeObtenible,
+            start_time: horaInicio?.toISOString(),
+            end_time: horaTermino?.toISOString(),
+            initial_difficulties: dificultadInicial,
+            final_difficulties: registroFinal
           }),
         });
 
@@ -81,7 +81,7 @@ export default function ChallengeFinal({
       </Box>
 
       <Box className="challenge-score-box">
-        {typeof puntajeAnterior.puntaje_obtenido === "number" && puntajeAnterior.puntaje_obtenido < puntaje && (
+        {typeof puntajeAnterior.total_score === "number" && puntajeAnterior.total_score < puntaje && (
           <Typography variant="h6" gutterBottom>
             🏆 NUEVO RÉCORD PERSONAL 🏆
           </Typography>

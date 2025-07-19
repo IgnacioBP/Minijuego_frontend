@@ -18,8 +18,8 @@ export default function ActivityOptions({ actividad, onResponder, disabled }) {
       setRespondido(true);
       
       const comentario = correcta
-      ? actividad.comentario_correcto
-      : actividad.comentario_incorrecto;
+      ? actividad.correct_feedback
+      : actividad.incorrect_feedback;
       
       const mostrado = true;
       onResponder(mostrado, comentario); 
@@ -36,14 +36,14 @@ export default function ActivityOptions({ actividad, onResponder, disabled }) {
 
   const validarRespuesta = () => {
     setRespondido(true);
-    const correcta = seleccion === actividad.respuesta;
+    const correcta = seleccion === actividad.answer;
 
     // GUARDAR PROGRESO
     const progresoActual = JSON.parse(localStorage.getItem("progresoUsuario")) || {};
-    const etapaKey = `etapa_${actividad.etapa}`;
+    const etapaKey = `etapa_${actividad.stage}`;
     const etapaProgreso = progresoActual[etapaKey] || {};
 
-    const nuevaActividad = actividad.orden_salida;
+    const nuevaActividad = actividad.output_order;
 
     const nuevoProgresoEtapa = {
       ...etapaProgreso,
@@ -61,7 +61,7 @@ export default function ActivityOptions({ actividad, onResponder, disabled }) {
     const token = localStorage.getItem("token");
     if (token) {
       saveProgress({
-        etapaId: actividad.etapa,
+        etapaId: actividad.stage,
         conversacion: etapaProgreso.ultimo_chat_mostrado,
         actividad: nuevaActividad,
         final: etapaProgreso.final_alcanzado || false,
@@ -76,8 +76,8 @@ export default function ActivityOptions({ actividad, onResponder, disabled }) {
     // Mostrar feedback tras un pequeño delay
     setTimeout(() => {
       const comentario = correcta
-        ? actividad.comentario_correcto
-        : actividad.comentario_incorrecto;
+        ? actividad.correct_feedback
+        : actividad.incorrect_feedback;
       const mostrado = false
       onResponder(mostrado, comentario);
     }, 300);
@@ -88,14 +88,14 @@ export default function ActivityOptions({ actividad, onResponder, disabled }) {
       <Paper elevation={3} className="actividad-paper">
         
         <Typography variant="subtitle1" className="actividad-pregunta">
-          {actividad.enunciado}
+          {actividad.statement}
         </Typography>
 
-        {actividad.contenido.opciones.map((opcion, idx) => {
+        {actividad.content.opciones.map((opcion, idx) => {
           let clase = "opcion-boton";
 
           if (respondido) {
-            if (opcion === actividad.respuesta) {
+            if (opcion === actividad.answer) {
               clase += " opcion-correcta";
             } else if (seleccion === opcion) {
               clase += " opcion-incorrecta";

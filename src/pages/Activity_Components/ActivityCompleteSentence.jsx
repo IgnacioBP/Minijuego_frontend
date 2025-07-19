@@ -13,7 +13,7 @@ export default function ActivityCompleteSentence({ actividad, onResponder, disab
 
   // Si la actividad ya fue respondida, pre-cargar esa info
   useEffect(() => {
-    setMaxSeleccion(normalizarRespuesta(actividad.respuesta).length);
+    setMaxSeleccion(normalizarRespuesta(actividad.answer).length);
 
     if (actividad.respuesta_usuario) {
       console.log("RESPUESTA YA RESPONDIDA")
@@ -25,8 +25,8 @@ export default function ActivityCompleteSentence({ actividad, onResponder, disab
       setRespondido(true);
 
       const comentario = esCorrecta
-        ? actividad.comentario_correcto
-        : actividad.comentario_incorrecto;
+        ? actividad.correct_feedback
+        : actividad.incorrect_feedback;
       
       const mostrado = true
       onResponder(mostrado, comentario);
@@ -65,17 +65,17 @@ export default function ActivityCompleteSentence({ actividad, onResponder, disab
     const seleccion = normalizarRespuesta(opcionesSeleccionadas);
     const correcta = arraysIguales(
       seleccion.map(s => s.toLowerCase().trim()).sort(),
-      normalizarRespuesta(actividad.respuesta).map(s => s.toLowerCase().trim()).sort()
+      normalizarRespuesta(actividad.answer).map(s => s.toLowerCase().trim()).sort()
     );
 
     setRespondido(true);
 
     // GUARDAR PROGRESO
     const progresoActual = JSON.parse(localStorage.getItem("progresoUsuario")) || {};
-    const etapaKey = `etapa_${actividad.etapa}`;
+    const etapaKey = `etapa_${actividad.stage}`;
     const etapaProgreso = progresoActual[etapaKey] || {};
 
-    const nuevaActividad = actividad.orden_salida;
+    const nuevaActividad = actividad.output_order;
 
     const nuevoProgresoEtapa = {
       ...etapaProgreso,
@@ -93,7 +93,7 @@ export default function ActivityCompleteSentence({ actividad, onResponder, disab
     const token = localStorage.getItem("token");
     if (token) {
       saveProgress({
-        etapaId: actividad.etapa,
+        etapaId: actividad.stage,
         conversacion: etapaProgreso.ultimo_chat_mostrado,
         actividad: nuevaActividad,
         final: etapaProgreso.final_alcanzado || false,
@@ -108,8 +108,8 @@ export default function ActivityCompleteSentence({ actividad, onResponder, disab
     // Mostrar feedback tras un pequeño delay
     setTimeout(() => {
       const comentario = correcta
-        ? actividad.comentario_correcto
-        : actividad.comentario_incorrecto;
+        ? actividad.correct_feedback
+        : actividad.incorrect_feedback;
 
       const mostrado = false
       onResponder(mostrado, comentario);
@@ -124,12 +124,12 @@ export default function ActivityCompleteSentence({ actividad, onResponder, disab
       <Paper elevation={3} className="actividad-paper">
         
         <Typography variant="subtitle1" className="actividad-pregunta">
-          {actividad.enunciado}
+          {actividad.statement}
         </Typography>
 
          <Grid container columns={12} spacing={2} sx={{ width: "100%" }}>
-          {actividad?.contenido?.opciones?.map((opcion, index) => {
-            const cantidadOpciones = actividad.contenido.opciones.length;
+          {actividad?.content?.opciones?.map((opcion, index) => {
+            const cantidadOpciones = actividad.content.opciones.length;
             const cols = cantidadOpciones === 4 ? 6 : 4;
 
             return (
@@ -141,8 +141,8 @@ export default function ActivityCompleteSentence({ actividad, onResponder, disab
                   className={`
                     opcion-boton
                     ${opcionesSeleccionadas.includes(opcion) ? "opcion-seleccionada " : ""}
-                    ${respondido && normalizarRespuesta(actividad.respuesta).includes(opcion) ? "opcion-correcta" : ""}
-                    ${respondido && opcionesSeleccionadas.includes(opcion) && !normalizarRespuesta(actividad.respuesta).includes(opcion) ? "opcion-incorrecta" : ""}
+                    ${respondido && normalizarRespuesta(actividad.answer).includes(opcion) ? "opcion-correcta" : ""}
+                    ${respondido && opcionesSeleccionadas.includes(opcion) && !normalizarRespuesta(actividad.answer).includes(opcion) ? "opcion-incorrecta" : ""}
                   `}
                   sx={{ height: "100px" }}
                 >

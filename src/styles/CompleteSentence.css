@@ -24,7 +24,10 @@
     border-radius: 12px;
     text-align: center;
     height: 100px;
-    padding: 10px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .option-card:hover {

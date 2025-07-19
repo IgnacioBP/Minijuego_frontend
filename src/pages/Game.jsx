@@ -132,16 +132,16 @@ export default function ChatGame() {
 
           data.forEach((item,index) => {
             if (item.tipo_general === "mensaje") {
-              if (item.orden_salida <= (etapaProgreso.ultimo_chat_mostrado || 0)) {
+              if (item.output_order <= (etapaProgreso.ultimo_chat_mostrado || 0)) {
                 mensajesYaMostrados.push(item);
                 siguienteIndice = index + 1;
 
-                if (item.antes_comentario && item.contenido_comentario) {
+                if (item.before_comment && item.contenido_comentario) {
                   console.log("ENTRO AQUI")
                   mensajesYaMostrados.push({
                     tipo_general: "mensaje",
-                    contenido: item.contenido_comentario,
-                    orden_salida: item.orden_salida + 0.1,
+                    content: item.contenido_comentario,
+                    output_order: item.output_order + 0.1,
                     autor: "usuario", // ESTO ES IMPORTANTE
                   });
                 }
@@ -149,7 +149,7 @@ export default function ChatGame() {
 
               
             } else if (item.tipo_general === "actividad") {
-              if (item.orden_salida <= (etapaProgreso.ultima_actividad_completada || 0)) {
+              if (item.output_order <= (etapaProgreso.ultima_actividad_completada || 0)) {
                 mensajesYaMostrados.push(item);
                 siguienteIndice = index + 1;
 
@@ -157,13 +157,13 @@ export default function ChatGame() {
                 if (item.respuesta_usuario) {
                   // console.log("respuesta obtenida "+item.respuesta_usuario.es_correcta)
                   const comentario = item.respuesta_usuario.es_correcta
-                    ? item.comentario_correcto
-                    : item.comentario_incorrecto;
+                    ? item.correct_feedback
+                    : item.incorrect_feedback;
 
                   mensajesYaMostrados.push({
                     tipo_general: "mensaje",
-                    contenido: comentario,
-                    orden_salida: item.orden_salida + 0.5,
+                    content: comentario,
+                    output_order: item.output_order + 0.5,
                   });
                 }
               }
@@ -205,7 +205,7 @@ export default function ChatGame() {
       const etapaKey = `etapa_${etapaId}`;
       const actividadLimite = progreso[etapaKey]?.ultima_actividad_completada ?? 0;
 
-      if (currentItem.tipo_general === "actividad" && currentItem.orden_salida > actividadLimite) {
+      if (currentItem.tipo_general === "actividad" && currentItem.output_order > actividadLimite) {
         setDisplayedMessages((prev) => [...prev, currentItem]);
         setTyping(false)
         playSound();
@@ -214,12 +214,12 @@ export default function ChatGame() {
 
       console.log(currentItem)
 
-      if (currentItem.antes_comentario) {
+      if (currentItem.before_comment) {
         if (currentItem.comentario) {
           const comentarioPrevio = {
             tipo_general: "mensaje",
-            contenido: currentItem.contenido_comentario,
-            orden_salida: currentItem.orden_salida + 0.1,
+            content: currentItem.contenido_comentario,
+            output_order: currentItem.output_order + 0.1,
             autor: "usuario",
           };
           setDisplayedMessages((prev) => [...prev, currentItem, comentarioPrevio]);
@@ -235,8 +235,8 @@ export default function ChatGame() {
       setTyping(true);
 
       let tiempoEspera = 3000;
-      if (currentItem.tipo_general === "mensaje" && currentItem.contenido) {
-        const numCaracteres = currentItem.contenido.length;
+      if (currentItem.tipo_general === "mensaje" && currentItem.content) {
+        const numCaracteres = currentItem.content.length;
         tiempoEspera = Math.min(Math.max(300 + numCaracteres * 50, 2000), 6000);
       }
 
@@ -251,12 +251,12 @@ export default function ChatGame() {
           // Guardar progrso del chat
           const progresoActual = JSON.parse(localStorage.getItem("progresoUsuario"));
           const etapaProgreso = progresoActual[etapaKey]
-          const maximo_ultimo = Math.max(etapaProgreso.ultimo_chat_mostrado, currentItem.orden_salida );
+          const maximo_ultimo = Math.max(etapaProgreso.ultimo_chat_mostrado, currentItem.output_order );
 
           const nuevoProgresoEtapa = {
             ultimo_chat_mostrado: maximo_ultimo,
             ultima_actividad_completada: etapaProgreso.ultima_actividad_completada,
-            final_alcanzado: currentItem.final,
+            final_alcanzado: currentItem.end,
             dificultad: etapaProgreso.dificultad
           };
 
@@ -267,14 +267,14 @@ export default function ChatGame() {
           
           localStorage.setItem("progresoUsuario", JSON.stringify(nuevoProgreso));
 
-          if (currentItem.final){
+          if (currentItem.end){
             const token = localStorage.getItem("token");
-            setComplete(currentItem.final)
+            setComplete(currentItem.end)
             saveProgress({
               etapaId,
-              conversacion: currentItem.orden_salida,
+              conversacion: currentItem.output_order,
               actividad: etapaProgreso.ultima_actividad_completada,
-              final: currentItem.final,
+              final: currentItem.end,
               token: token,
             });
             setTyping(false);
@@ -379,8 +379,8 @@ export default function ChatGame() {
       // Si se guardó correctamente, agrega la burbuja del usuario
       const comentarioBubble = {
         tipo_general: "mensaje",
-        contenido: comentario,
-        orden_salida: allMessages[currentIndex]?.orden_salida + 0.1 || 0,
+        content: comentario,
+        output_order: allMessages[currentIndex]?.output_order + 0.1 || 0,
         autor: "usuario"
       };
 
@@ -479,7 +479,7 @@ export default function ChatGame() {
           return (
             <ChatBubble 
               key={index}
-              text={item.contenido} 
+              text={item.content} 
               autor={item.autor || "npc"} 
             />
           );
@@ -489,7 +489,7 @@ export default function ChatGame() {
           // Si es actividad
           const actividadCompletada = 
             progreso &&
-            item.orden_salida <= progreso[`etapa_${etapaId}`]?.ultima_actividad_completada;
+            item.output_order <= progreso[`etapa_${etapaId}`]?.ultima_actividad_completada;
 
             const commonProps = {
               key: index,
@@ -498,8 +498,8 @@ export default function ChatGame() {
               onResponder: (mostrado, comentario) => {
                 const comentarioBubble = {
                   tipo_general: "mensaje",
-                  contenido: comentario,
-                  orden_salida: item.orden_salida + 0.5,
+                  content: comentario,
+                  output_order: item.output_order + 0.5,
                 };
                 
                 if (mostrado !== true){
@@ -526,7 +526,7 @@ export default function ChatGame() {
               },
             };
             
-            switch (item.tipo) {
+            switch (item.mode) {
               case "seleccion_multiple":
                 return <ActivityOptions {...commonProps} />;
               case "completar_frase":

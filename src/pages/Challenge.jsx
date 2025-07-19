@@ -242,18 +242,18 @@ export default function Challenge() {
     const token = localStorage.getItem("token");
 
     const cuerpo ={
-        tema: theme,
-        pregunta: actividad.pregunta,
-        dificultad: dificulty,
-        opciones: actividad.opciones,
-        respuesta_correcta: actividad.respuesta_correcta,
-        respuesta_jugador: seleccionJugador,
-        es_correcta: acierto,
+        topic : theme,
+        question : actividad.pregunta,
+        difficulty : dificulty,
+        options : actividad.opciones,
+        correct_answer : actividad.respuesta_correcta,
+        player_answer : seleccionJugador,
+        is_correct: acierto,
         image: actividad.url_imagen
     }
 
     if (puntos_feedback !== null ){
-      cuerpo["puntaje"]= puntos_feedback
+      cuerpo["score"]= puntos_feedback
     }
 
     //await fetch("http://localhost:8000/api/guardar-respuesta-desafio/", {
